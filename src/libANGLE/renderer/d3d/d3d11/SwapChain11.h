@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -27,43 +27,63 @@ class SwapChain11 final : public SwapChainD3D
                 IUnknown *d3dTexture,
                 GLenum backBufferFormat,
                 GLenum depthBufferFormat,
-                EGLint orientation);
-    virtual ~SwapChain11();
+                EGLint orientation,
+                EGLint samples);
+    ~SwapChain11() override;
 
-    EGLint resize(EGLint backbufferWidth, EGLint backbufferHeight);
-    EGLint reset(EGLint backbufferWidth, EGLint backbufferHeight, EGLint swapInterval) override;
-    EGLint swapRect(EGLint x, EGLint y, EGLint width, EGLint height) override;
+    EGLint resize(DisplayD3D *displayD3D, EGLint backbufferWidth, EGLint backbufferHeight) override;
+    EGLint reset(DisplayD3D *displayD3D,
+                 EGLint backbufferWidth,
+                 EGLint backbufferHeight,
+                 EGLint swapInterval) override;
+    EGLint swapRect(DisplayD3D *displayD3D,
+                    EGLint x,
+                    EGLint y,
+                    EGLint width,
+                    EGLint height) override;
     void recreate() override;
 
-    RenderTargetD3D *getColorRenderTarget() override { return &mColorRenderTarget; }
-    RenderTargetD3D *getDepthStencilRenderTarget() override { return &mDepthStencilRenderTarget; }
+    RenderTargetD3D *getColorRenderTarget() override;
+    RenderTargetD3D *getDepthStencilRenderTarget() override;
 
-    ID3D11Texture2D *getOffscreenTexture();
-    ID3D11RenderTargetView *getRenderTarget();
-    ID3D11ShaderResourceView *getRenderTargetShaderResource();
+    const TextureHelper11 &getOffscreenTexture();
+    const d3d11::RenderTargetView &getRenderTarget();
+    const d3d11::SharedSRV &getRenderTargetShaderResource(d3d::Context *context);
 
-    ID3D11Texture2D *getDepthStencilTexture();
-    ID3D11DepthStencilView *getDepthStencil();
-    ID3D11ShaderResourceView *getDepthStencilShaderResource();
+    const TextureHelper11 &getDepthStencilTexture();
+    const d3d11::DepthStencilView &getDepthStencil();
+    const d3d11::SharedSRV &getDepthStencilShaderResource();
 
     EGLint getWidth() const { return mWidth; }
     EGLint getHeight() const { return mHeight; }
-    void *getKeyedMutex() override { return mKeyedMutex; }
+    void *getKeyedMutex() override;
+    EGLint getSamples() const { return mEGLSamples; }
+
+    egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc) override;
 
   private:
     void release();
-    void initPassThroughResources();
+    angle::Result initPassThroughResources(DisplayD3D *displayD3D);
 
     void releaseOffscreenColorBuffer();
     void releaseOffscreenDepthBuffer();
-    EGLint resetOffscreenBuffers(int backbufferWidth, int backbufferHeight);
-    EGLint resetOffscreenColorBuffer(int backbufferWidth, int backbufferHeight);
-    EGLint resetOffscreenDepthBuffer(int backbufferWidth, int backbufferHeight);
+    EGLint resetOffscreenBuffers(DisplayD3D *displayD3D, int backbufferWidth, int backbufferHeight);
+    EGLint resetOffscreenColorBuffer(DisplayD3D *displayD3D,
+                                     int backbufferWidth,
+                                     int backbufferHeight);
+    EGLint resetOffscreenDepthBuffer(DisplayD3D *displayD3D,
+                                     int backbufferWidth,
+                                     int backbufferHeight);
 
     DXGI_FORMAT getSwapChainNativeFormat() const;
 
-    EGLint copyOffscreenToBackbuffer(EGLint x, EGLint y, EGLint width, EGLint height);
-    EGLint present(EGLint x, EGLint y, EGLint width, EGLint height);
+    EGLint copyOffscreenToBackbuffer(DisplayD3D *displayD3D,
+                                     EGLint x,
+                                     EGLint y,
+                                     EGLint width,
+                                     EGLint height);
+    EGLint present(DisplayD3D *displayD3D, EGLint x, EGLint y, EGLint width, EGLint height);
+    UINT getD3DSamples() const;
 
     Renderer11 *mRenderer;
     EGLint mWidth;
@@ -79,31 +99,35 @@ class SwapChain11 final : public SwapChainD3D
     IDXGISwapChain *mSwapChain;
     IDXGISwapChain1 *mSwapChain1;
     IDXGIKeyedMutex *mKeyedMutex;
-    HANDLE mFrameLatencyWaitableObject;
 
-    ID3D11Texture2D *mBackBufferTexture;
-    ID3D11RenderTargetView *mBackBufferRTView;
-    ID3D11ShaderResourceView *mBackBufferSRView;
+    TextureHelper11 mBackBufferTexture;
+    d3d11::RenderTargetView mBackBufferRTView;
+    d3d11::SharedSRV mBackBufferSRView;
 
     const bool mNeedsOffscreenTexture;
-    ID3D11Texture2D *mOffscreenTexture;
-    ID3D11RenderTargetView *mOffscreenRTView;
-    ID3D11ShaderResourceView *mOffscreenSRView;
+    TextureHelper11 mOffscreenTexture;
+    d3d11::RenderTargetView mOffscreenRTView;
+    d3d11::SharedSRV mOffscreenSRView;
+    bool mNeedsOffscreenTextureCopy;
+    TextureHelper11 mOffscreenTextureCopyForSRV;
 
-    ID3D11Texture2D *mDepthStencilTexture;
-    ID3D11DepthStencilView *mDepthStencilDSView;
-    ID3D11ShaderResourceView *mDepthStencilSRView;
+    TextureHelper11 mDepthStencilTexture;
+    d3d11::DepthStencilView mDepthStencilDSView;
+    d3d11::SharedSRV mDepthStencilSRView;
 
-    ID3D11Buffer *mQuadVB;
-    ID3D11SamplerState *mPassThroughSampler;
-    ID3D11InputLayout *mPassThroughIL;
-    ID3D11VertexShader *mPassThroughVS;
-    ID3D11PixelShader *mPassThroughPS;
-    ID3D11RasterizerState *mPassThroughRS;
+    d3d11::Buffer mQuadVB;
+    d3d11::SamplerState mPassThroughSampler;
+    d3d11::InputLayout mPassThroughIL;
+    d3d11::VertexShader mPassThroughVS;
+    d3d11::PixelShader mPassThroughOrResolvePS;
+    d3d11::RasterizerState mPassThroughRS;
 
     SurfaceRenderTarget11 mColorRenderTarget;
     SurfaceRenderTarget11 mDepthStencilRenderTarget;
+
+    EGLint mEGLSamples;
+    LONGLONG mQPCFrequency;
 };
 
 }  // namespace rx
-#endif // LIBANGLE_RENDERER_D3D_D3D11_SWAPCHAIN11_H_
+#endif  // LIBANGLE_RENDERER_D3D_D3D11_SWAPCHAIN11_H_

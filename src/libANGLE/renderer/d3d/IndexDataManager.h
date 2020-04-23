@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -19,7 +19,10 @@
 
 namespace
 {
-    enum { INITIAL_INDEX_BUFFER_SIZE = 4096 * sizeof(GLuint) };
+enum
+{
+    INITIAL_INDEX_BUFFER_SIZE = 4096 * sizeof(GLuint)
+};
 }
 
 namespace gl
@@ -39,21 +42,20 @@ class RendererD3D;
 struct SourceIndexData
 {
     BufferD3D *srcBuffer;
-    const GLvoid *srcIndices;
+    const void *srcIndices;
     unsigned int srcCount;
-    GLenum srcIndexType;
+    gl::DrawElementsType srcIndexType;
     bool srcIndicesChanged;
 };
 
 struct TranslatedIndexData
 {
-    gl::IndexRange indexRange;
     unsigned int startIndex;
-    unsigned int startOffset;   // In bytes
+    unsigned int startOffset;  // In bytes
 
     IndexBuffer *indexBuffer;
     BufferD3D *storage;
-    GLenum indexType;
+    gl::DrawElementsType indexType;
     unsigned int serial;
 
     SourceIndexData srcIndexData;
@@ -62,32 +64,49 @@ struct TranslatedIndexData
 class IndexDataManager : angle::NonCopyable
 {
   public:
-    explicit IndexDataManager(BufferFactoryD3D *factory, RendererClass rendererClass);
+    explicit IndexDataManager(BufferFactoryD3D *factory);
     virtual ~IndexDataManager();
 
-    gl::Error prepareIndexData(GLenum srcType,
-                               GLsizei count,
-                               gl::Buffer *glBuffer,
-                               const GLvoid *indices,
-                               TranslatedIndexData *translated,
-                               bool primitiveRestartFixedIndexEnabled);
+    void deinitialize();
+
+    angle::Result prepareIndexData(const gl::Context *context,
+                                   gl::DrawElementsType srcType,
+                                   gl::DrawElementsType dstType,
+                                   GLsizei count,
+                                   gl::Buffer *glBuffer,
+                                   const void *indices,
+                                   TranslatedIndexData *translated);
 
   private:
-    gl::Error streamIndexData(const GLvoid *data,
-                              unsigned int count,
-                              GLenum srcType,
-                              GLenum dstType,
-                              bool usePrimitiveRestartFixedIndex,
-                              TranslatedIndexData *translated);
-    gl::Error getStreamingIndexBuffer(GLenum destinationIndexType,
-                                      IndexBufferInterface **outBuffer);
+    angle::Result streamIndexData(const gl::Context *context,
+                                  const void *data,
+                                  unsigned int count,
+                                  gl::DrawElementsType srcType,
+                                  gl::DrawElementsType dstType,
+                                  bool usePrimitiveRestartFixedIndex,
+                                  TranslatedIndexData *translated);
+    angle::Result getStreamingIndexBuffer(const gl::Context *context,
+                                          gl::DrawElementsType destinationIndexType,
+                                          IndexBufferInterface **outBuffer);
+
+    using StreamingBuffer = std::unique_ptr<StreamingIndexBufferInterface>;
 
     BufferFactoryD3D *const mFactory;
-    RendererClass mRendererClass;
-    StreamingIndexBufferInterface *mStreamingBufferShort;
-    StreamingIndexBufferInterface *mStreamingBufferInt;
+    std::unique_ptr<StreamingIndexBufferInterface> mStreamingBufferShort;
+    std::unique_ptr<StreamingIndexBufferInterface> mStreamingBufferInt;
 };
 
-}
+angle::Result GetIndexTranslationDestType(const gl::Context *context,
+                                          GLsizei indexCount,
+                                          gl::DrawElementsType indexType,
+                                          const void *indices,
+                                          bool usePrimitiveRestartWorkaround,
+                                          gl::DrawElementsType *destTypeOut);
 
-#endif   // LIBANGLE_INDEXDATAMANAGER_H_
+ANGLE_INLINE bool IsOffsetAligned(gl::DrawElementsType elementType, unsigned int offset)
+{
+    return (offset % gl::GetDrawElementsTypeSize(elementType) == 0);
+}
+}  // namespace rx
+
+#endif  // LIBANGLE_INDEXDATAMANAGER_H_

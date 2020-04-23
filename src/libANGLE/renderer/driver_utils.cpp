@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,6 +10,12 @@
 
 #include "libANGLE/renderer/driver_utils.h"
 
+#include "common/platform.h"
+
+#if defined(ANGLE_PLATFORM_ANDROID)
+#    include <sys/system_properties.h>
+#endif
+
 namespace rx
 {
 // Intel
@@ -17,6 +23,8 @@ namespace rx
 namespace
 {
 // gen7
+const uint32_t IvyBridge[] = {0x0152, 0x0156, 0x015A, 0x0162, 0x0166, 0x016A};
+
 const uint32_t Haswell[] = {
     0x0402, 0x0406, 0x040A, 0x040B, 0x040E, 0x0C02, 0x0C06, 0x0C0A, 0x0C0B, 0x0C0E,
     0x0A02, 0x0A06, 0x0A0A, 0x0A0B, 0x0A0E, 0x0D02, 0x0D06, 0x0D0A, 0x0D0B, 0x0D0E,  // hsw_gt1
@@ -46,6 +54,48 @@ const uint32_t Kabylake[] = {0x5916, 0x5913, 0x5906, 0x5926, 0x5921, 0x5915, 0x5
                              0x591A, 0x590A, 0x591D, 0x5908, 0x5923, 0x5927};
 
 }  // anonymous namespace
+
+IntelDriverVersion::IntelDriverVersion(uint16_t lastPart) : mVersionPart(lastPart) {}
+
+bool IntelDriverVersion::operator==(const IntelDriverVersion &version)
+{
+    return mVersionPart == version.mVersionPart;
+}
+
+bool IntelDriverVersion::operator!=(const IntelDriverVersion &version)
+{
+    return !(*this == version);
+}
+
+bool IntelDriverVersion::operator<(const IntelDriverVersion &version)
+{
+    // See http://www.intel.com/content/www/us/en/support/graphics-drivers/000005654.html to
+    // understand the Intel graphics driver version number on Windows.
+    // mVersionPart1 changes with OS version. mVersionPart2 changes with DirectX version.
+    // mVersionPart3 stands for release year. mVersionPart4 is driver specific unique version
+    // number.
+    // For example: Intel driver version '20.19.15.4539'
+    //              20   -> windows 10 driver
+    //              19   -> DirectX 12 first version(12.0) supported
+    //              15   -> Driver released in 2015
+    //              4539 -> Driver specific unique version number
+    // For linux, Intel graphics driver version is the mesa version. The version number has three
+    // parts: major revision, minor revision, release number. So, for linux, we need to compare
+    // three parts.
+    // Currently, it's only used in windows. So, checking the last part is enough. Once it's needed
+    // in other platforms, it's easy to be extended.
+    return mVersionPart < version.mVersionPart;
+}
+
+bool IntelDriverVersion::operator>=(const IntelDriverVersion &version)
+{
+    return !(*this < version);
+}
+
+bool IsIvyBridge(uint32_t DeviceId)
+{
+    return std::find(std::begin(IvyBridge), std::end(IvyBridge), DeviceId) != std::end(IvyBridge);
+}
 
 bool IsHaswell(uint32_t DeviceId)
 {
@@ -77,5 +127,79 @@ bool IsKabylake(uint32_t DeviceId)
 {
     return std::find(std::begin(Kabylake), std::end(Kabylake), DeviceId) != std::end(Kabylake);
 }
+
+const char *GetVendorString(uint32_t vendorId)
+{
+    switch (vendorId)
+    {
+        case VENDOR_ID_AMD:
+            return "Advanced Micro Devices";
+        case VENDOR_ID_ARM:
+            return "ARM";
+        case VENDOR_ID_BROADCOM:
+            return "Broadcom";
+        case VENDOR_ID_GOOGLE:
+            return "Google";
+        case VENDOR_ID_INTEL:
+            return "Intel";
+        case VENDOR_ID_NVIDIA:
+            return "NVIDIA";
+        case VENDOR_ID_QUALCOMM:
+            return "Qualcomm";
+        default:
+            // TODO(jmadill): More vendor IDs.
+            ASSERT(vendorId == 0xba5eba11);  // Mock vendor ID used for tests.
+            return "Unknown";
+    }
+}
+
+int GetAndroidSDKVersion()
+{
+#if defined(ANGLE_PLATFORM_ANDROID)
+    char apiVersion[PROP_VALUE_MAX];
+    int length = __system_property_get("ro.build.version.sdk", apiVersion);
+    if (length == 0)
+    {
+        return 0;
+    }
+    return atoi(apiVersion);
+#else
+    return 0;
+#endif
+}
+
+OSVersion::OSVersion() {}
+OSVersion::OSVersion(int major, int minor, int patch)
+    : majorVersion(major), minorVersion(minor), patchVersion(patch)
+{}
+
+bool operator==(const OSVersion &a, const OSVersion &b)
+{
+    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) ==
+           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
+}
+bool operator!=(const OSVersion &a, const OSVersion &b)
+{
+    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) !=
+           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
+}
+bool operator<(const OSVersion &a, const OSVersion &b)
+{
+    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) <
+           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
+}
+bool operator>=(const OSVersion &a, const OSVersion &b)
+{
+    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) >=
+           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
+}
+
+#if !defined(ANGLE_PLATFORM_APPLE)
+OSVersion GetMacOSVersion()
+{
+    // Return a default version
+    return OSVersion(0, 0, 0);
+}
+#endif
 
 }  // namespace rx

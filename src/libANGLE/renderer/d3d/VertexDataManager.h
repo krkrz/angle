@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -11,16 +11,18 @@
 #define LIBANGLE_RENDERER_D3D_VERTEXDATAMANAGER_H_
 
 #include "common/angleutils.h"
-#include "libANGLE/angletypes.h"
 #include "libANGLE/Constants.h"
 #include "libANGLE/VertexAttribute.h"
+#include "libANGLE/angletypes.h"
+#include "libANGLE/renderer/d3d/VertexBuffer.h"
 
 namespace gl
 {
 class State;
 struct VertexAttribute;
+class VertexBinding;
 struct VertexAttribCurrentValueData;
-}
+}  // namespace gl
 
 namespace rx
 {
@@ -47,18 +49,22 @@ class VertexBufferBinding final
 struct TranslatedAttribute
 {
     TranslatedAttribute();
+    TranslatedAttribute(const TranslatedAttribute &other);
 
     // Computes the correct offset from baseOffset, usesFirstVertexOffset, stride and startVertex.
     // Can throw an error on integer overflow.
-    gl::ErrorOrResult<unsigned int> computeOffset(GLint startVertex) const;
+    angle::Result computeOffset(const gl::Context *context,
+                                GLint startVertex,
+                                unsigned int *offsetOut) const;
 
     bool active;
 
     const gl::VertexAttribute *attribute;
-    GLenum currentValueType;
+    const gl::VertexBinding *binding;
+    gl::VertexAttribType currentValueType;
     unsigned int baseOffset;
     bool usesFirstVertexOffset;
-    unsigned int stride;   // 0 means not to advance the read pointer at all
+    unsigned int stride;  // 0 means not to advance the read pointer at all
 
     VertexBufferBinding vertexBuffer;
     BufferD3D *storage;
@@ -76,7 +82,9 @@ enum class VertexStorageType
 };
 
 // Given a vertex attribute, return the type of storage it will use.
-VertexStorageType ClassifyAttributeStorage(const gl::VertexAttribute &attrib);
+VertexStorageType ClassifyAttributeStorage(const gl::Context *context,
+                                           const gl::VertexAttribute &attrib,
+                                           const gl::VertexBinding &binding);
 
 class VertexDataManager : angle::NonCopyable
 {
@@ -84,60 +92,69 @@ class VertexDataManager : angle::NonCopyable
     VertexDataManager(BufferFactoryD3D *factory);
     virtual ~VertexDataManager();
 
-    gl::Error prepareVertexData(const gl::State &state,
-                                GLint start,
-                                GLsizei count,
-                                std::vector<TranslatedAttribute> *translatedAttribs,
-                                GLsizei instances);
+    angle::Result initialize(const gl::Context *context);
+    void deinitialize();
 
-    static void StoreDirectAttrib(TranslatedAttribute *directAttrib);
+    angle::Result prepareVertexData(const gl::Context *context,
+                                    GLint start,
+                                    GLsizei count,
+                                    std::vector<TranslatedAttribute> *translatedAttribs,
+                                    GLsizei instances);
 
-    static gl::Error StoreStaticAttrib(TranslatedAttribute *translated,
-                                       GLsizei count,
-                                       GLsizei instances);
+    static void StoreDirectAttrib(const gl::Context *context, TranslatedAttribute *directAttrib);
 
-    gl::Error storeDynamicAttribs(std::vector<TranslatedAttribute> *translatedAttribs,
-                                  const gl::AttributesMask &dynamicAttribsMask,
-                                  GLint start,
-                                  GLsizei count,
-                                  GLsizei instances);
+    static angle::Result StoreStaticAttrib(const gl::Context *context,
+                                           TranslatedAttribute *translated);
+
+    angle::Result storeDynamicAttribs(const gl::Context *context,
+                                      std::vector<TranslatedAttribute> *translatedAttribs,
+                                      const gl::AttributesMask &dynamicAttribsMask,
+                                      GLint start,
+                                      size_t count,
+                                      GLsizei instances);
 
     // Promote static usage of dynamic buffers.
-    static void PromoteDynamicAttribs(const std::vector<TranslatedAttribute> &translatedAttribs,
+    static void PromoteDynamicAttribs(const gl::Context *context,
+                                      const std::vector<TranslatedAttribute> &translatedAttribs,
                                       const gl::AttributesMask &dynamicAttribsMask,
-                                      GLsizei count);
+                                      size_t count);
 
-    gl::Error storeCurrentValue(const gl::VertexAttribCurrentValueData &currentValue,
-                                TranslatedAttribute *translated,
-                                size_t attribIndex);
+    angle::Result storeCurrentValue(const gl::Context *context,
+                                    const gl::VertexAttribCurrentValueData &currentValue,
+                                    TranslatedAttribute *translated,
+                                    size_t attribIndex);
 
   private:
-    struct CurrentValueState
+    struct CurrentValueState final : angle::NonCopyable
     {
-        CurrentValueState();
+        CurrentValueState(BufferFactoryD3D *factory);
+        CurrentValueState(CurrentValueState &&other);
         ~CurrentValueState();
 
-        StreamingVertexBufferInterface *buffer;
+        std::unique_ptr<StreamingVertexBufferInterface> buffer;
         gl::VertexAttribCurrentValueData data;
         size_t offset;
     };
 
-    gl::Error reserveSpaceForAttrib(const TranslatedAttribute &translatedAttrib,
-                                    GLsizei count,
-                                    GLsizei instances) const;
+    angle::Result reserveSpaceForAttrib(const gl::Context *context,
+                                        const TranslatedAttribute &translatedAttrib,
+                                        GLint start,
+                                        size_t count,
+                                        GLsizei instances);
 
-    gl::Error storeDynamicAttrib(TranslatedAttribute *translated,
-                                 GLint start,
-                                 GLsizei count,
-                                 GLsizei instances);
+    angle::Result storeDynamicAttrib(const gl::Context *context,
+                                     TranslatedAttribute *translated,
+                                     GLint start,
+                                     size_t count,
+                                     GLsizei instances);
 
     BufferFactoryD3D *const mFactory;
 
-    StreamingVertexBufferInterface *mStreamingBuffer;
+    StreamingVertexBufferInterface mStreamingBuffer;
     std::vector<CurrentValueState> mCurrentValueCache;
     gl::AttributesMask mDynamicAttribsMaskCache;
 };
 
 }  // namespace rx
 
-#endif   // LIBANGLE_RENDERER_D3D_VERTEXDATAMANAGER_H_
+#endif  // LIBANGLE_RENDERER_D3D_VERTEXDATAMANAGER_H_

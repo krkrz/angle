@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -9,43 +9,57 @@
 
 #include "common/angleutils.h"
 #include "compiler/preprocessor/DiagnosticsBase.h"
+#include "compiler/translator/Severity.h"
 
 namespace sh
 {
 
-class TInfoSink;
+class TInfoSinkBase;
 struct TSourceLoc;
 
-class TDiagnostics : public pp::Diagnostics, angle::NonCopyable
+class TDiagnostics : public angle::pp::Diagnostics, angle::NonCopyable
 {
   public:
-    TDiagnostics(TInfoSink &infoSink);
+    TDiagnostics(TInfoSinkBase &infoSink);
     ~TDiagnostics() override;
-
-    TInfoSink &infoSink() { return mInfoSink; }
 
     int numErrors() const { return mNumErrors; }
     int numWarnings() const { return mNumWarnings; }
 
-    void writeInfo(Severity severity,
-                   const pp::SourceLocation &loc,
-                   const std::string &reason,
-                   const std::string &token,
-                   const std::string &extra);
+    void error(const angle::pp::SourceLocation &loc, const char *reason, const char *token);
+    void warning(const angle::pp::SourceLocation &loc, const char *reason, const char *token);
 
-    void error(const TSourceLoc &loc, const char *reason, const char *token, const char *extraInfo);
-    void warning(const TSourceLoc &loc,
-                 const char *reason,
-                 const char *token,
-                 const char *extraInfo);
+    void error(const TSourceLoc &loc, const char *reason, const char *token);
+    void warning(const TSourceLoc &loc, const char *reason, const char *token);
+
+    void globalError(const char *message);
+
+    void resetErrorCount();
 
   protected:
-    void print(ID id, const pp::SourceLocation &loc, const std::string &text) override;
+    void writeInfo(Severity severity,
+                   const angle::pp::SourceLocation &loc,
+                   const char *reason,
+                   const char *token);
+
+    void print(ID id, const angle::pp::SourceLocation &loc, const std::string &text) override;
 
   private:
-    TInfoSink &mInfoSink;
+    TInfoSinkBase &mInfoSink;
     int mNumErrors;
     int mNumWarnings;
+};
+
+// Diagnostics wrapper to use when the code is only allowed to generate warnings.
+class PerformanceDiagnostics : public angle::NonCopyable
+{
+  public:
+    PerformanceDiagnostics(TDiagnostics *diagnostics);
+
+    void warning(const TSourceLoc &loc, const char *reason, const char *token);
+
+  private:
+    TDiagnostics *mDiagnostics;
 };
 
 }  // namespace sh

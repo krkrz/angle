@@ -1,151 +1,82 @@
-ANGLE -- Microsoft Windows Store branch
-=====
-ANGLE allows Windows users to seamlessly run OpenGL ES content by efficiently translating 
-OpenGL ES API into DirectX 11 API calls.
+# ANGLE - Almost Native Graphics Layer Engine
 
-This repository is maintained by Microsoft to support the use of ANGLE by Windows Store app developers. It contains several branches:
- - [ms-master](https://github.com/Microsoft/angle/tree/ms-master) - for Universal Windows 10 apps (UWP) and desktop apps
- - [ms-win8.1](https://github.com/Microsoft/angle/tree/ms-win8.1) - for Windows 8.1 and Windows Phone 8.1 apps
- - [ms-holographic-experimental](https://github.com/Microsoft/angle/tree/ms-holographic-experimental) - for experimental HoloLens support
+The goal of ANGLE is to allow users of multiple operating systems to seamlessly run WebGL and other
+OpenGL ES content by translating OpenGL ES API calls to one of the hardware-supported APIs available
+for that platform. ANGLE currently provides translation from OpenGL ES 2.0 and 3.0 to desktop
+OpenGL, OpenGL ES, Direct3D 9, and Direct3D 11. Support for translation from OpenGL ES to Vulkan is
+underway, and future plans include compute shader support (ES 3.1) and MacOS support.
 
-ms-master contains a copy of ANGLE that is regularly updated from the ANGLE [master branch](https://code.google.com/p/angleproject).
-It also contains recent changes made by Microsoft that have not yet been merged back to ANGLE master 
-_(our goal is to eventually merge everything, but if you want the latest and greatest 
-  Windows Store features, you will find them here first)_
-  
-The repository also contains:
-- [Documentation](https://github.com/microsoft/angle/wiki) and 
-  [project templates](https://github.com/Microsoft/angle/tree/ms-master/templates) 
-  focused on Windows Store app development
-- Sample code and utilities such as 
-  [DDS](https://github.com/Microsoft/angle/wiki/Loading-textures-from-dds-files) and 
-  [WIC](https://github.com/Microsoft/angle/wiki/Loading-textures-from-image-files) 
-  texture loaders
+### Level of OpenGL ES support via backing renderers
 
-The ms-master branch and ms-win8.1 branch contain the source code used to build the ANGLE binaries that we publish on NuGet. 
-The NuGet package with Windows 10 (UWP) binaries is [available here](https://www.nuget.org/packages/ANGLE.WindowsStore). 
-The NuGet package with Win8.1/Phone8.1 binaries is [available here](https://www.nuget.org/packages/ANGLE.WindowsStore.win81).
-  
-Feature Support
-=====
-ANGLE supports different versions of OpenGL ES depending on the capabilities of the underlying hardware. 
-In particular, the supported version depends on which 
-[D3D Feature Levels](https://msdn.microsoft.com/en-us/library/windows/desktop/ff476876%28v=vs.85%29.aspx) 
-the hardware supports:
+|                |  Direct3D 9   |  Direct3D 11     |   Desktop GL   |    GL ES      |    Vulkan     |    Metal      |
+|----------------|:-------------:|:----------------:|:--------------:|:-------------:|:-------------:|:-------------:|
+| OpenGL ES 2.0  |    complete   |    complete      |    complete    |   complete    |    complete   |  in progress  |
+| OpenGL ES 3.0  |               |    complete      |    complete    |   complete    |  in progress  |               |
+| OpenGL ES 3.1  |               |   in progress    |    complete    |   complete    |  in progress  |               |
+| OpenGL ES 3.2  |               |                  |    planned     |    planned    |    planned    |               |
 
-<table>
-<tr>
-<th>Hardware<br>Feature Levels</th>
-<th>Example devices</th>
-<th>What does ANGLE support?</th>
-</tr>
-<tr>
-<td>
-11_1<br>
-11_0<br>
-10_1<br>
-</td>
-<td>Modern Desktop PCs<br>Surface Pros</td>
-<td>OpenGL ES 2.0<br> OpenGL ES 3.0</td>
-</tr>
-<tr>
-<td>
-10_0<br>
-</td>
-<td></td>
-<td>OpenGL ES 2.0</td>
-</tr>
-<tr>
-<td>
-9_3
-</td>
-<td>Windows Phones</td>
-<td>OpenGL ES 2.0 (except <a href=https://github.com/Microsoft/angle/wiki/Known-Issues>minor corner cases</a>)</td>
-</tr>
-<tr>
-<td>
-9_2<br>
-9_1
-</td>
-<td>Surface RT</td>
-<td>OpenGL ES 2.0 (via software emulation)</td>
-</tr>
-<tr>
-<td>
-None
-</td>
-<td>Raspberry Pi 2</td>
-<td>OpenGL ES 2.0 (via software emulation)</td>
-</tr>
-</table>
+### Platform support via backing renderers
 
-Getting ANGLE
-=====
+|             |    Direct3D 9  |   Direct3D 11  |   Desktop GL  |    GL ES    |   Vulkan    |    Metal    |
+|------------:|:--------------:|:--------------:|:-------------:|:-----------:|:-----------:|:-----------:|
+| Windows     |    complete    |    complete    |   complete    |   complete  |   complete  |             |
+| Linux       |                |                |   complete    |             |   complete  |             |
+| Mac OS X    |                |                |   complete    |             |             | in progress |
+| iOS         |                |                |               |             |             |   planned   |
+| Chrome OS   |                |                |               |   complete  |   planned   |             |
+| Android     |                |                |               |   complete  |   complete  |             |
+| Fuchsia     |                |                |               |             | in progress |             |
 
-There are two ways to get ANGLE for Windows Store applications:
-  1. Download compiled ANGLE binaries as a [NuGet package](http://github.com/Microsoft/angle/wiki/How-To-Use-the-ANGLE-NuGet-Package)
-  2. Download and compile the ANGLE source code from this GitHub repository
+ANGLE v1.0.772 was certified compliant by passing the ES 2.0.3 conformance tests in October 2011.
+ANGLE also provides an implementation of the EGL 1.4 specification.
 
-Easy-to-use Visual Studio app templates are currently available for option 2 above. See the 'Quick Start' section below for more details.
+ANGLE is used as the default WebGL backend for both Google Chrome and Mozilla Firefox on Windows
+platforms. Chrome uses ANGLE for all graphics rendering on Windows, including the accelerated
+Canvas2D implementation and the Native Client sandbox environment.
 
-Requirements
-=====
+Portions of the ANGLE shader compiler are used as a shader validator and translator by WebGL
+implementations across multiple platforms. It is used on Mac OS X, Linux, and in mobile variants of
+the browsers. Having one shader validator helps to ensure that a consistent set of GLSL ES shaders
+are accepted across browsers and platforms. The shader translator can be used to translate shaders
+to other shading languages, and to optionally apply shader modifications to work around bugs or
+quirks in the native graphics drivers. The translator targets Desktop GLSL, Direct3D HLSL, and even
+ESSL for native GLES2 platforms.
 
-Windows 10 Development:
-* [Visual Studio 2015 Community or higher](https://www.visualstudio.com/downloads/visual-studio-2015-downloads-vs.aspx)
-* Windows 10 for local Windows development
+## Sources
 
-Clasic Windows (Desktop) Development:
-* Visual Studio 2015 Community or higher.
+ANGLE repository is hosted by Chromium project and can be
+[browsed online](https://chromium.googlesource.com/angle/angle) or cloned with
 
-For Windows 8.1 or Windows Phone 8.1 development, see the [ms-win8.1](https://github.com/Microsoft/angle/tree/ms-win8.1) branch.
+    git clone https://chromium.googlesource.com/angle/angle
 
-More Info
-=====
 
-For detailed information about ANGLE, please visit our wiki (found [here](https://github.com/Microsoft/angle/wiki)). Our wiki 
-contains lots of useful information about ANGLE, including:
+## Building
 
-- Guides to help you get started with ANGLE in Windows apps
-- Tips and tricks to get good performance out of ANGLE
-- Sample code and documentation
-- And more!
+View the [Dev setup instructions](doc/DevSetup.md).
 
-For a broad overview of ANGLE and how it works, please take a look at our [//BUILD/ 2015 presentation](http://channel9.msdn.com/Events/Build/2015/3-686).
+## Contributing
 
-Quick Start (compiling from source)
-=====
-1. Clone or download ANGLE from our GitHub repository
-2. Install our easy-to-use Visual Studio templates by running install.bat in the /templates/ directory of your copy of ANGLE, or follow [these manual steps](https://github.com/Microsoft/angle/wiki/Installing-Templates).
-3. Open the appropriate ANGLE Visual Studio solution for your project, and build all flavors of it
-4. In Visual Studio go "File -> New -> Project", create a new ANGLE application, and hit F5 to run it!
+* Join our [Google group](https://groups.google.com/group/angleproject) to keep up to date.
+* Join us on IRC in the #ANGLEproject channel on FreeNode.
+* Join us on [Slack](https://chromium.slack.com) in the #angle channel.
+* [File bugs](http://anglebug.com/new) in the [issue tracker](https://bugs.chromium.org/p/angleproject/issues/list) (preferably with an isolated test-case).
+* [Choose an ANGLE branch](doc/ChoosingANGLEBranch.md) to track in your own project.
 
-The Windows 10 Visual Studio solution for ANGLE is located here:
-* /winrt/10/src/angle.sln
 
-The Visual Studio solution for Windows desktop applications is located here:
+* Read ANGLE development [documentation](doc).
+* Look at [pending](https://chromium-review.googlesource.com/q/project:angle/angle+status:open)
+  and [merged](https://chromium-review.googlesource.com/q/project:angle/angle+status:merged) changes.
+* Become a [code contributor](doc/ContributingCode.md).
+* Use ANGLE's [coding standard](doc/CodingStandard.md).
+* Learn how to [build ANGLE for Chromium development](doc/BuildingAngleForChromiumDevelopment.md).
+* Get help on [debugging ANGLE](doc/DebuggingTips.md).
+* Go through [ANGLE's orientation](doc/Orientation.md) and sift through [starter projects](doc/Starter-Projects.md).
 
-* /src/angle.sln
 
-For Windows 8.1 or Windows Phone 8.1 development, see the [ms-win8.1](https://github.com/Microsoft/angle/tree/ms-win8.1) branch.
-
-Useful Links
-=====
-- [Recent breaking changes](https://github.com/Microsoft/angle/wiki/breaking-changes)
-- [Known issues with ANGLE](https://github.com/Microsoft/angle/wiki/known-issues)
-- [Master ANGLE project info](https://code.google.com/p/angleproject/)
-- [Deprecated ANGLE Windows 8.0 branch](https://github.com/Microsoft/angle-win8.0)
-- [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). 
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) 
-or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional 
-questions or comments.
-
-Feedback
-=====
-If you have feedback about this branch then we would love to hear it. Please 
-create an issue on this GitHub page, or contact the Microsoft contributors directly.
-
-Microsoft Contributors
-=====
-- Cooper Partin (coopp-at-microsoft-dot-com)
-- Austin Kinross (aukinros-at-microsoft-dot-com)
+* Read about WebGL on the [Khronos WebGL Wiki](http://khronos.org/webgl/wiki/Main_Page).
+* Learn about implementation details in the [OpenGL Insights chapter on ANGLE](http://www.seas.upenn.edu/~pcozzi/OpenGLInsights/OpenGLInsights-ANGLE.pdf) and this [ANGLE presentation](https://drive.google.com/file/d/0Bw29oYeC09QbbHoxNE5EUFh0RGs/view?usp=sharing).
+* Learn about the past, present, and future of the ANGLE implementation in [this presentation](https://docs.google.com/presentation/d/1CucIsdGVDmdTWRUbg68IxLE5jXwCb2y1E9YVhQo0thg/pub?start=false&loop=false).
+* Watch a [short presentation](https://youtu.be/QrIKdjmpmaA) on the Vulkan back-end.
+* Track the [dEQP test conformance](doc/dEQP-Charts.md)
+* Read design docs on the [Vulkan back-end](src/libANGLE/renderer/vulkan/README.md)
+* If you use ANGLE in your own project, we'd love to hear about it!

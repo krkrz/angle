@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -7,9 +7,15 @@
 #include "compiler/translator/VersionGLSL.h"
 
 #include "angle_gl.h"
+#include "compiler/translator/Symbol.h"
 
 namespace sh
 {
+
+namespace
+{
+constexpr const ImmutableString kGlPointCoordString("gl_PointCoord");
+}  // anonymous namespace
 
 int ShaderOutputTypeToGLSLVersion(ShShaderOutput output)
 {
@@ -76,7 +82,8 @@ TVersionGLSL::TVersionGLSL(sh::GLenum type, const TPragma &pragma, ShShaderOutpu
 
 void TVersionGLSL::visitSymbol(TIntermSymbol *node)
 {
-    if (node->getSymbol() == "gl_PointCoord")
+    if (node->variable().symbolType() == SymbolType::BuiltIn &&
+        node->getName() == kGlPointCoordString)
     {
         ensureVersionIsAtLeast(GLSL_VERSION_120);
     }
@@ -92,65 +99,53 @@ bool TVersionGLSL::visitDeclaration(Visit, TIntermDeclaration *node)
     return true;
 }
 
-bool TVersionGLSL::visitInvariantDeclaration(Visit, TIntermInvariantDeclaration *node)
+bool TVersionGLSL::visitGlobalQualifierDeclaration(Visit, TIntermGlobalQualifierDeclaration *node)
 {
-    ensureVersionIsAtLeast(GLSL_VERSION_120);
+    if (node->isPrecise())
+    {
+        ensureVersionIsAtLeast(GLSL_VERSION_420);
+    }
+    else
+    {
+        ensureVersionIsAtLeast(GLSL_VERSION_120);
+    }
     return true;
+}
+
+void TVersionGLSL::visitFunctionPrototype(TIntermFunctionPrototype *node)
+{
+    size_t paramCount = node->getFunction()->getParamCount();
+    for (size_t i = 0; i < paramCount; ++i)
+    {
+        const TVariable *param = node->getFunction()->getParam(i);
+        const TType &type      = param->getType();
+        if (type.isArray())
+        {
+            TQualifier qualifier = type.getQualifier();
+            if ((qualifier == EvqOut) || (qualifier == EvqInOut))
+            {
+                ensureVersionIsAtLeast(GLSL_VERSION_120);
+                break;
+            }
+        }
+    }
 }
 
 bool TVersionGLSL::visitAggregate(Visit, TIntermAggregate *node)
 {
-    bool visitChildren = true;
-
-    switch (node->getOp())
+    if (node->getOp() == EOpConstruct && node->getType().isMatrix())
     {
-        case EOpParameters:
+        const TIntermSequence &sequence = *(node->getSequence());
+        if (sequence.size() == 1)
         {
-            const TIntermSequence &params = *(node->getSequence());
-            for (TIntermSequence::const_iterator iter = params.begin(); iter != params.end();
-                 ++iter)
+            TIntermTyped *typed = sequence.front()->getAsTyped();
+            if (typed && typed->isMatrix())
             {
-                const TIntermTyped *param = (*iter)->getAsTyped();
-                if (param->isArray())
-                {
-                    TQualifier qualifier = param->getQualifier();
-                    if ((qualifier == EvqOut) || (qualifier == EvqInOut))
-                    {
-                        ensureVersionIsAtLeast(GLSL_VERSION_120);
-                        break;
-                    }
-                }
+                ensureVersionIsAtLeast(GLSL_VERSION_120);
             }
-            // Fully processed. No need to visit children.
-            visitChildren = false;
-            break;
         }
-        case EOpConstructMat2:
-        case EOpConstructMat2x3:
-        case EOpConstructMat2x4:
-        case EOpConstructMat3x2:
-        case EOpConstructMat3:
-        case EOpConstructMat3x4:
-        case EOpConstructMat4x2:
-        case EOpConstructMat4x3:
-        case EOpConstructMat4:
-        {
-            const TIntermSequence &sequence = *(node->getSequence());
-            if (sequence.size() == 1)
-            {
-                TIntermTyped *typed = sequence.front()->getAsTyped();
-                if (typed && typed->isMatrix())
-                {
-                    ensureVersionIsAtLeast(GLSL_VERSION_120);
-                }
-            }
-            break;
-        }
-        default:
-            break;
     }
-
-    return visitChildren;
+    return true;
 }
 
 void TVersionGLSL::ensureVersionIsAtLeast(int version)

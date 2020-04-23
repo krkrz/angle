@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2011-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2011 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <sstream>
 
+#include "GLSLANG/ShaderLang.h"
 #include "common/debug.h"
 #include "compiler/preprocessor/DiagnosticsBase.h"
 #include "compiler/preprocessor/DirectiveHandlerBase.h"
@@ -17,6 +18,9 @@
 #include "compiler/preprocessor/MacroExpander.h"
 #include "compiler/preprocessor/Token.h"
 #include "compiler/preprocessor/Tokenizer.h"
+
+namespace angle
+{
 
 namespace
 {
@@ -131,79 +135,18 @@ bool hasDoubleUnderscores(const std::string &name)
 bool isMacroPredefined(const std::string &name, const pp::MacroSet &macroSet)
 {
     pp::MacroSet::const_iterator iter = macroSet.find(name);
-    return iter != macroSet.end() ? iter->second.predefined : false;
+    return iter != macroSet.end() ? iter->second->predefined : false;
 }
 
-}  // namespace anonymous
+}  // namespace
 
 namespace pp
 {
-
-class DefinedParser : public Lexer
-{
-  public:
-    DefinedParser(Lexer *lexer, const MacroSet *macroSet, Diagnostics *diagnostics)
-        : mLexer(lexer), mMacroSet(macroSet), mDiagnostics(diagnostics)
-    {
-    }
-
-  protected:
-    void lex(Token *token) override
-    {
-        const char kDefined[] = "defined";
-
-        mLexer->lex(token);
-        if (token->type != Token::IDENTIFIER)
-            return;
-        if (token->text != kDefined)
-            return;
-
-        bool paren = false;
-        mLexer->lex(token);
-        if (token->type == '(')
-        {
-            paren = true;
-            mLexer->lex(token);
-        }
-
-        if (token->type != Token::IDENTIFIER)
-        {
-            mDiagnostics->report(Diagnostics::PP_UNEXPECTED_TOKEN, token->location, token->text);
-            skipUntilEOD(mLexer, token);
-            return;
-        }
-        MacroSet::const_iterator iter = mMacroSet->find(token->text);
-        std::string expression        = iter != mMacroSet->end() ? "1" : "0";
-
-        if (paren)
-        {
-            mLexer->lex(token);
-            if (token->type != ')')
-            {
-                mDiagnostics->report(Diagnostics::PP_UNEXPECTED_TOKEN, token->location,
-                                     token->text);
-                skipUntilEOD(mLexer, token);
-                return;
-            }
-        }
-
-        // We have a valid defined operator.
-        // Convert the current token into a CONST_INT token.
-        token->type = Token::CONST_INT;
-        token->text = expression;
-    }
-
-  private:
-    Lexer *mLexer;
-    const MacroSet *mMacroSet;
-    Diagnostics *mDiagnostics;
-};
-
 DirectiveParser::DirectiveParser(Tokenizer *tokenizer,
                                  MacroSet *macroSet,
                                  Diagnostics *diagnostics,
                                  DirectiveHandler *directiveHandler,
-                                 int maxMacroExpansionDepth)
+                                 const PreprocessorSettings &settings)
     : mPastFirstStatement(false),
       mSeenNonPreprocessorToken(false),
       mTokenizer(tokenizer),
@@ -211,9 +154,10 @@ DirectiveParser::DirectiveParser(Tokenizer *tokenizer,
       mDiagnostics(diagnostics),
       mDirectiveHandler(directiveHandler),
       mShaderVersion(100),
-      mMaxMacroExpansionDepth(maxMacroExpansionDepth)
-{
-}
+      mSettings(settings)
+{}
+
+DirectiveParser::~DirectiveParser() {}
 
 void DirectiveParser::lex(Token *token)
 {
@@ -358,30 +302,30 @@ void DirectiveParser::parseDefine(Token *token)
                              token->text);
     }
 
-    Macro macro;
-    macro.type = Macro::kTypeObj;
-    macro.name = token->text;
+    std::shared_ptr<Macro> macro = std::make_shared<Macro>();
+    macro->type                  = Macro::kTypeObj;
+    macro->name                  = token->text;
 
     mTokenizer->lex(token);
     if (token->type == '(' && !token->hasLeadingSpace())
     {
         // Function-like macro. Collect arguments.
-        macro.type = Macro::kTypeFunc;
+        macro->type = Macro::kTypeFunc;
         do
         {
             mTokenizer->lex(token);
             if (token->type != Token::IDENTIFIER)
                 break;
 
-            if (std::find(macro.parameters.begin(), macro.parameters.end(), token->text) !=
-                macro.parameters.end())
+            if (std::find(macro->parameters.begin(), macro->parameters.end(), token->text) !=
+                macro->parameters.end())
             {
                 mDiagnostics->report(Diagnostics::PP_MACRO_DUPLICATE_PARAMETER_NAMES,
                                      token->location, token->text);
                 return;
             }
 
-            macro.parameters.push_back(token->text);
+            macro->parameters.push_back(token->text);
 
             mTokenizer->lex(token);  // Get ','.
         } while (token->type == ',');
@@ -400,24 +344,24 @@ void DirectiveParser::parseDefine(Token *token)
         // list. Resetting it also allows us to reuse Token::equals() to
         // compare macros.
         token->location = SourceLocation();
-        macro.replacements.push_back(*token);
+        macro->replacements.push_back(*token);
         mTokenizer->lex(token);
     }
-    if (!macro.replacements.empty())
+    if (!macro->replacements.empty())
     {
         // Whitespace preceding the replacement list is not considered part of
         // the replacement list for either form of macro.
-        macro.replacements.front().setHasLeadingSpace(false);
+        macro->replacements.front().setHasLeadingSpace(false);
     }
 
     // Check for macro redefinition.
-    MacroSet::const_iterator iter = mMacroSet->find(macro.name);
-    if (iter != mMacroSet->end() && !macro.equals(iter->second))
+    MacroSet::const_iterator iter = mMacroSet->find(macro->name);
+    if (iter != mMacroSet->end() && !macro->equals(*iter->second))
     {
-        mDiagnostics->report(Diagnostics::PP_MACRO_REDEFINED, token->location, macro.name);
+        mDiagnostics->report(Diagnostics::PP_MACRO_REDEFINED, token->location, macro->name);
         return;
     }
-    mMacroSet->insert(std::make_pair(macro.name, macro));
+    mMacroSet->insert(std::make_pair(macro->name, macro));
 }
 
 void DirectiveParser::parseUndef(Token *token)
@@ -434,13 +378,13 @@ void DirectiveParser::parseUndef(Token *token)
     MacroSet::iterator iter = mMacroSet->find(token->text);
     if (iter != mMacroSet->end())
     {
-        if (iter->second.predefined)
+        if (iter->second->predefined)
         {
             mDiagnostics->report(Diagnostics::PP_MACRO_PREDEFINED_UNDEFINED, token->location,
                                  token->text);
             return;
         }
-        else if (iter->second.expansionCount > 0)
+        else if (iter->second->expansionCount > 0)
         {
             mDiagnostics->report(Diagnostics::PP_MACRO_UNDEFINED_WHILE_INVOKED, token->location,
                                  token->text);
@@ -733,8 +677,20 @@ void DirectiveParser::parseExtension(Token *token)
         }
         else
         {
-            mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1,
-                                 token->location, token->text);
+            if (mSettings.shaderSpec == SH_WEBGL_SPEC)
+            {
+                mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_WEBGL,
+                                     token->location, token->text);
+            }
+            else
+            {
+                mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1,
+                                     token->location, token->text);
+                // This is just a warning on CHROME OS http://anglebug.com/4023
+#if !defined(ANGLE_PLATFORM_CHROMEOS)
+                valid = false;
+#endif
+            }
         }
     }
     if (valid)
@@ -756,7 +712,8 @@ void DirectiveParser::parseVersion(Token *token)
     enum State
     {
         VERSION_NUMBER,
-        VERSION_PROFILE,
+        VERSION_PROFILE_ES,
+        VERSION_PROFILE_GL,
         VERSION_ENDLINE
     };
 
@@ -784,11 +741,33 @@ void DirectiveParser::parseVersion(Token *token)
                 }
                 if (valid)
                 {
-                    state = (version < 300) ? VERSION_ENDLINE : VERSION_PROFILE;
+                    if (sh::IsDesktopGLSpec(mSettings.shaderSpec))
+                    {
+                        state = VERSION_PROFILE_GL;
+                    }
+                    else if (version < 300)
+                    {
+                        state = VERSION_ENDLINE;
+                    }
+                    else
+                    {
+                        state = VERSION_PROFILE_ES;
+                    }
                 }
                 break;
-            case VERSION_PROFILE:
+            case VERSION_PROFILE_ES:
+                ASSERT(!sh::IsDesktopGLSpec(mSettings.shaderSpec));
                 if (token->type != Token::IDENTIFIER || token->text != "es")
+                {
+                    mDiagnostics->report(Diagnostics::PP_INVALID_VERSION_DIRECTIVE, token->location,
+                                         token->text);
+                    valid = false;
+                }
+                state = VERSION_ENDLINE;
+                break;
+            case VERSION_PROFILE_GL:
+                ASSERT(sh::IsDesktopGLSpec(mSettings.shaderSpec));
+                if (token->type != Token::IDENTIFIER || token->text != "core")
                 {
                     mDiagnostics->report(Diagnostics::PP_INVALID_VERSION_DIRECTIVE, token->location,
                                          token->text);
@@ -804,6 +783,11 @@ void DirectiveParser::parseVersion(Token *token)
         }
 
         mTokenizer->lex(token);
+
+        if (token->type == '\n' && state == VERSION_PROFILE_GL)
+        {
+            state = VERSION_ENDLINE;
+        }
     }
 
     if (valid && (state != VERSION_ENDLINE))
@@ -822,7 +806,7 @@ void DirectiveParser::parseVersion(Token *token)
 
     if (valid)
     {
-        mDirectiveHandler->handleVersion(token->location, version);
+        mDirectiveHandler->handleVersion(token->location, version, mSettings.shaderSpec);
         mShaderVersion = version;
         PredefineMacro(mMacroSet, "__VERSION__", version);
     }
@@ -836,7 +820,7 @@ void DirectiveParser::parseLine(Token *token)
     bool parsedFileNumber = false;
     int line = 0, file = 0;
 
-    MacroExpander macroExpander(mTokenizer, mMacroSet, mDiagnostics, mMaxMacroExpansionDepth);
+    MacroExpander macroExpander(mTokenizer, mMacroSet, mDiagnostics, mSettings, false);
 
     // Lex the first token after "#line" so we can check it for EOD.
     macroExpander.lex(token);
@@ -944,8 +928,7 @@ int DirectiveParser::parseExpressionIf(Token *token)
 {
     ASSERT((getDirective(token) == DIRECTIVE_IF) || (getDirective(token) == DIRECTIVE_ELIF));
 
-    DefinedParser definedParser(mTokenizer, mMacroSet, mDiagnostics);
-    MacroExpander macroExpander(&definedParser, mMacroSet, mDiagnostics, mMaxMacroExpansionDepth);
+    MacroExpander macroExpander(mTokenizer, mMacroSet, mDiagnostics, mSettings, true);
     ExpressionParser expressionParser(&macroExpander, mDiagnostics);
 
     int expression = 0;
@@ -994,3 +977,5 @@ int DirectiveParser::parseExpressionIfdef(Token *token)
 }
 
 }  // namespace pp
+
+}  // namespace angle

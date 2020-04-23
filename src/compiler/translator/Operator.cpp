@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,7 +10,7 @@ const char *GetOperatorString(TOperator op)
 {
     switch (op)
     {
-        // Note: ops from EOpNull to EOpPrototype can't be handled here.
+            // Note: EOpNull and EOpCall* can't be handled here.
 
         case EOpNegative:
             return "-";
@@ -18,8 +18,6 @@ const char *GetOperatorString(TOperator op)
             return "+";
         case EOpLogicalNot:
             return "!";
-        case EOpVectorLogicalNot:
-            return "not";
         case EOpBitwiseNot:
             return "~";
 
@@ -32,6 +30,9 @@ const char *GetOperatorString(TOperator op)
         case EOpPreDecrement:
             return "--";
 
+        case EOpArrayLength:
+            return ".length()";
+
         case EOpAdd:
             return "+";
         case EOpSub:
@@ -42,14 +43,11 @@ const char *GetOperatorString(TOperator op)
             return "/";
         case EOpIMod:
             return "%";
+
         case EOpEqual:
             return "==";
         case EOpNotEqual:
             return "!=";
-        case EOpVectorEqual:
-            return "equal";
-        case EOpVectorNotEqual:
-            return "notEqual";
         case EOpLessThan:
             return "<";
         case EOpGreaterThan:
@@ -58,6 +56,20 @@ const char *GetOperatorString(TOperator op)
             return "<=";
         case EOpGreaterThanEqual:
             return ">=";
+
+        case EOpEqualComponentWise:
+            return "equal";
+        case EOpNotEqualComponentWise:
+            return "notEqual";
+        case EOpLessThanComponentWise:
+            return "lessThan";
+        case EOpGreaterThanComponentWise:
+            return "greaterThan";
+        case EOpLessThanEqualComponentWise:
+            return "lessThanEqual";
+        case EOpGreaterThanEqualComponentWise:
+            return "greaterThanEqual";
+
         case EOpComma:
             return ",";
 
@@ -66,6 +78,7 @@ const char *GetOperatorString(TOperator op)
         case EOpVectorTimesMatrix:
         case EOpMatrixTimesVector:
         case EOpMatrixTimesScalar:
+        case EOpMatrixTimesMatrix:
             return "*";
 
         case EOpLogicalOr:
@@ -138,7 +151,7 @@ const char *GetOperatorString(TOperator op)
             return "log2";
         case EOpSqrt:
             return "sqrt";
-        case EOpInverseSqrt:
+        case EOpInversesqrt:
             return "inversesqrt";
 
         case EOpAbs:
@@ -171,12 +184,14 @@ const char *GetOperatorString(TOperator op)
             return "mix";
         case EOpStep:
             return "step";
-        case EOpSmoothStep:
+        case EOpSmoothstep:
             return "smoothstep";
-        case EOpIsNan:
+        case EOpIsnan:
             return "isnan";
-        case EOpIsInf:
+        case EOpIsinf:
             return "isinf";
+        case EOpFma:
+            return "fma";
 
         case EOpFloatBitsToInt:
             return "floatBitsToInt";
@@ -186,6 +201,11 @@ const char *GetOperatorString(TOperator op)
             return "intBitsToFloat";
         case EOpUintBitsToFloat:
             return "uintBitsToFloat";
+
+        case EOpFrexp:
+            return "frexp";
+        case EOpLdexp:
+            return "ldexp";
 
         case EOpPackSnorm2x16:
             return "packSnorm2x16";
@@ -200,6 +220,15 @@ const char *GetOperatorString(TOperator op)
         case EOpUnpackHalf2x16:
             return "unpackHalf2x16";
 
+        case EOpPackUnorm4x8:
+            return "packUnorm4x8";
+        case EOpPackSnorm4x8:
+            return "packSnorm4x8";
+        case EOpUnpackUnorm4x8:
+            return "unpackUnorm4x8";
+        case EOpUnpackSnorm4x8:
+            return "unpackSnorm4x8";
+
         case EOpLength:
             return "length";
         case EOpDistance:
@@ -210,7 +239,7 @@ const char *GetOperatorString(TOperator op)
             return "cross";
         case EOpNormalize:
             return "normalize";
-        case EOpFaceForward:
+        case EOpFaceforward:
             return "faceforward";
         case EOpReflect:
             return "reflect";
@@ -224,9 +253,8 @@ const char *GetOperatorString(TOperator op)
         case EOpFwidth:
             return "fwidth";
 
-        case EOpMatrixTimesMatrix:
-            return "*";
-
+        case EOpMulMatrixComponentWise:
+            return "matrixCompMult";
         case EOpOuterProduct:
             return "outerProduct";
         case EOpTranspose:
@@ -240,6 +268,29 @@ const char *GetOperatorString(TOperator op)
             return "any";
         case EOpAll:
             return "all";
+        case EOpLogicalNotComponentWise:
+            return "not";
+
+        case EOpBitfieldExtract:
+            return "bitfieldExtract";
+        case EOpBitfieldInsert:
+            return "bitfieldInsert";
+        case EOpBitfieldReverse:
+            return "bitfieldReverse";
+        case EOpBitCount:
+            return "bitCount";
+        case EOpFindLSB:
+            return "findLSB";
+        case EOpFindMSB:
+            return "findMSB";
+        case EOpUaddCarry:
+            return "uaddCarry";
+        case EOpUsubBorrow:
+            return "usubBorrow";
+        case EOpUmulExtended:
+            return "umulExtended";
+        case EOpImulExtended:
+            return "imulExtended";
 
         case EOpKill:
             return "kill";
@@ -249,58 +300,6 @@ const char *GetOperatorString(TOperator op)
             return "break";
         case EOpContinue:
             return "continue";
-
-        case EOpConstructInt:
-            return "int";
-        case EOpConstructUInt:
-            return "uint";
-        case EOpConstructBool:
-            return "bool";
-        case EOpConstructFloat:
-            return "float";
-        case EOpConstructVec2:
-            return "vec2";
-        case EOpConstructVec3:
-            return "vec3";
-        case EOpConstructVec4:
-            return "vec4";
-        case EOpConstructBVec2:
-            return "bvec2";
-        case EOpConstructBVec3:
-            return "bvec3";
-        case EOpConstructBVec4:
-            return "bvec4";
-        case EOpConstructIVec2:
-            return "ivec2";
-        case EOpConstructIVec3:
-            return "ivec3";
-        case EOpConstructIVec4:
-            return "ivec4";
-        case EOpConstructUVec2:
-            return "uvec2";
-        case EOpConstructUVec3:
-            return "uvec3";
-        case EOpConstructUVec4:
-            return "uvec4";
-        case EOpConstructMat2:
-            return "mat2";
-        case EOpConstructMat2x3:
-            return "mat2x3";
-        case EOpConstructMat2x4:
-            return "mat2x4";
-        case EOpConstructMat3x2:
-            return "mat3x2";
-        case EOpConstructMat3:
-            return "mat3";
-        case EOpConstructMat3x4:
-            return "mat3x4";
-        case EOpConstructMat4x2:
-            return "mat4x2";
-        case EOpConstructMat4x3:
-            return "mat4x3";
-        case EOpConstructMat4:
-            return "mat4";
-        // Note: EOpConstructStruct can't be handled here
 
         case EOpAssign:
             return "=";
@@ -333,7 +332,42 @@ const char *GetOperatorString(TOperator op)
             return "^=";
         case EOpBitwiseOrAssign:
             return "|=";
+        case EOpBarrier:
+            return "barrier";
+        case EOpMemoryBarrier:
+            return "memoryBarrier";
+        case EOpMemoryBarrierAtomicCounter:
+            return "memoryBarrierAtomicCounter";
+        case EOpMemoryBarrierBuffer:
+            return "memoryBarrierBuffer";
+        case EOpMemoryBarrierImage:
+            return "memoryBarrierImage";
+        case EOpMemoryBarrierShared:
+            return "memoryBarrierShared";
+        case EOpGroupMemoryBarrier:
+            return "groupMemoryBarrier";
 
+        case EOpAtomicAdd:
+            return "atomicAdd";
+        case EOpAtomicMin:
+            return "atomicMin";
+        case EOpAtomicMax:
+            return "atomicMax";
+        case EOpAtomicAnd:
+            return "atomicAnd";
+        case EOpAtomicOr:
+            return "atomicOr";
+        case EOpAtomicXor:
+            return "atomicXor";
+        case EOpAtomicExchange:
+            return "atomicExchange";
+        case EOpAtomicCompSwap:
+            return "atomicCompSwap";
+
+        case EOpEmitVertex:
+            return "EmitVertex";
+        case EOpEndPrimitive:
+            return "EndPrimitive";
         default:
             break;
     }
@@ -363,6 +397,24 @@ bool IsAssignment(TOperator op)
         case EOpBitwiseAndAssign:
         case EOpBitwiseXorAssign:
         case EOpBitwiseOrAssign:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool IsAtomicFunction(TOperator op)
+{
+    switch (op)
+    {
+        case EOpAtomicAdd:
+        case EOpAtomicMin:
+        case EOpAtomicMax:
+        case EOpAtomicAnd:
+        case EOpAtomicOr:
+        case EOpAtomicXor:
+        case EOpAtomicExchange:
+        case EOpAtomicCompSwap:
             return true;
         default:
             return false;

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -8,32 +8,32 @@
 
 #include "common/debug.h"
 
+namespace angle
+{
+
 namespace pp
 {
 
-Diagnostics::~Diagnostics()
-{
-}
+Diagnostics::~Diagnostics() {}
 
 void Diagnostics::report(ID id, const SourceLocation &loc, const std::string &text)
 {
-    // TODO(alokp): Keep a count of errors and warnings.
     print(id, loc, text);
 }
 
-Diagnostics::Severity Diagnostics::severity(ID id)
+bool Diagnostics::isError(ID id)
 {
     if ((id > PP_ERROR_BEGIN) && (id < PP_ERROR_END))
-        return PP_ERROR;
+        return true;
 
     if ((id > PP_WARNING_BEGIN) && (id < PP_WARNING_END))
-        return PP_WARNING;
+        return false;
 
     UNREACHABLE();
-    return PP_ERROR;
+    return true;
 }
 
-std::string Diagnostics::message(ID id)
+const char *Diagnostics::message(ID id)
 {
     switch (id)
     {
@@ -115,10 +115,14 @@ std::string Diagnostics::message(ID id)
             return "invalid file number";
         case PP_INVALID_LINE_DIRECTIVE:
             return "invalid line directive";
+        case PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1:
+            return "extension directive must occur before any non-preprocessor tokens in ESSL1";
         case PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL3:
             return "extension directive must occur before any non-preprocessor tokens in ESSL3";
         case PP_UNDEFINED_SHIFT:
             return "shift exponent is negative or undefined";
+        case PP_TOKENIZER_ERROR:
+            return "internal tokenizer error";
         // Errors end.
         // Warnings begin.
         case PP_EOF_IN_DIRECTIVE:
@@ -127,7 +131,7 @@ std::string Diagnostics::message(ID id)
             return "unexpected token after conditional expression";
         case PP_UNRECOGNIZED_PRAGMA:
             return "unrecognized pragma";
-        case PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1:
+        case PP_NON_PP_TOKEN_BEFORE_EXTENSION_WEBGL:
             return "extension directive should occur before any non-preprocessor tokens";
         case PP_WARNING_MACRO_NAME_RESERVED:
             return "macro name with a double underscore is reserved - unintented behavior is "
@@ -140,3 +144,5 @@ std::string Diagnostics::message(ID id)
 }
 
 }  // namespace pp
+
+}  // namespace angle

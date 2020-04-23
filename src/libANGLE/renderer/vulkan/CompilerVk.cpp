@@ -14,24 +14,13 @@
 namespace rx
 {
 
-CompilerVk::CompilerVk() : CompilerImpl()
-{
-}
+CompilerVk::CompilerVk() : CompilerImpl() {}
 
-CompilerVk::~CompilerVk()
-{
-}
-
-gl::Error CompilerVk::release()
-{
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
-}
+CompilerVk::~CompilerVk() {}
 
 ShShaderOutput CompilerVk::getTranslatorOutputType() const
 {
-    UNIMPLEMENTED();
-    return ShShaderOutput();
+    return SH_GLSL_VULKAN_OUTPUT;
 }
 
 }  // namespace rx

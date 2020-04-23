@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,9 +10,13 @@
 #include <math.h>
 #include <stdlib.h>
 #include "compiler/translator/Common.h"
+#include "compiler/translator/Severity.h"
 
 namespace sh
 {
+
+class ImmutableString;
+class TType;
 
 // Returns the fractional part of the given floating-point number.
 inline float fractionalPart(float f)
@@ -21,19 +25,7 @@ inline float fractionalPart(float f)
     return modff(f, &intPart);
 }
 
-//
-// TPrefixType is used to centralize how info log messages start.
-// See below.
-//
-enum TPrefixType
-{
-    EPrefixNone,
-    EPrefixWarning,
-    EPrefixError,
-    EPrefixInternalError,
-    EPrefixUnimplemented,
-    EPrefixNote
-};
+class ImmutableString;
 
 //
 // Encapsulate info logs for all objects that have them.
@@ -49,7 +41,7 @@ class TInfoSinkBase
     template <typename T>
     TInfoSinkBase &operator<<(const T &t)
     {
-        TPersistStringStream stream;
+        TPersistStringStream stream = sh::InitializeStream<TPersistStringStream>();
         stream << t;
         sink.append(stream.str());
         return *this;
@@ -76,6 +68,10 @@ class TInfoSinkBase
         sink.append(str.c_str());
         return *this;
     }
+    TInfoSinkBase &operator<<(const ImmutableString &str);
+
+    TInfoSinkBase &operator<<(const TType &type);
+
     // Make sure floats are written with correct precision.
     TInfoSinkBase &operator<<(float f)
     {
@@ -83,7 +79,7 @@ class TInfoSinkBase
         // does not have a fractional part, the default precision format does
         // not write the decimal portion which gets interpreted as integer by
         // the compiler.
-        TPersistStringStream stream;
+        TPersistStringStream stream = sh::InitializeStream<TPersistStringStream>();
         if (fractionalPart(f) == 0.0f)
         {
             stream.precision(1);
@@ -113,10 +109,8 @@ class TInfoSinkBase
     const TPersistString &str() const { return sink; }
     const char *c_str() const { return sink.c_str(); }
 
-    void prefix(TPrefixType p);
+    void prefix(Severity severity);
     void location(int file, int line);
-    void location(const TSourceLoc &loc);
-    void message(TPrefixType p, const TSourceLoc &loc, const char *m);
 
   private:
     TPersistString sink;

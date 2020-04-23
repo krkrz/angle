@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -8,6 +8,9 @@
 #define COMPILER_PREPROCESSOR_DIAGNOSTICSBASE_H_
 
 #include <string>
+
+namespace angle
+{
 
 namespace pp
 {
@@ -19,11 +22,6 @@ struct SourceLocation;
 class Diagnostics
 {
   public:
-    enum Severity
-    {
-        PP_ERROR,
-        PP_WARNING
-    };
     enum ID
     {
         PP_ERROR_BEGIN,
@@ -66,14 +64,22 @@ class Diagnostics
         PP_INVALID_LINE_NUMBER,
         PP_INVALID_FILE_NUMBER,
         PP_INVALID_LINE_DIRECTIVE,
+    // This is just a warning on CHROME OS http://anglebug.com/4023
+#if !defined(ANGLE_PLATFORM_CHROMEOS)
+        PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1,
+#endif
         PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL3,
         PP_UNDEFINED_SHIFT,
+        PP_TOKENIZER_ERROR,
         PP_ERROR_END,
 
         PP_WARNING_BEGIN,
         PP_EOF_IN_DIRECTIVE,
         PP_UNRECOGNIZED_PRAGMA,
+#if defined(ANGLE_PLATFORM_CHROMEOS)
         PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1,
+#endif
+        PP_NON_PP_TOKEN_BEFORE_EXTENSION_WEBGL,
         PP_WARNING_MACRO_NAME_RESERVED,
         PP_WARNING_END
     };
@@ -83,12 +89,14 @@ class Diagnostics
     void report(ID id, const SourceLocation &loc, const std::string &text);
 
   protected:
-    Severity severity(ID id);
-    std::string message(ID id);
+    bool isError(ID id);
+    const char *message(ID id);
 
     virtual void print(ID id, const SourceLocation &loc, const std::string &text) = 0;
 };
 
 }  // namespace pp
+
+}  // namespace angle
 
 #endif  // COMPILER_PREPROCESSOR_DIAGNOSTICSBASE_H_

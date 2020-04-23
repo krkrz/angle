@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -22,9 +22,9 @@ CoreWindowNativeWindow::~CoreWindowNativeWindow()
 bool CoreWindowNativeWindow::initialize(EGLNativeWindowType window, IPropertySet *propertySet)
 {
     ComPtr<IPropertySet> props = propertySet;
-    ComPtr<IInspectable> win = window;
-    SIZE swapChainSize = {};
-    HRESULT result = S_OK;
+    ComPtr<IInspectable> win   = window;
+    SIZE swapChainSize         = {};
+    HRESULT result             = S_OK;
 
     // IPropertySet is an optional parameter and can be null.
     // If one is specified, cache as an IMap and read the properties
@@ -40,7 +40,8 @@ bool CoreWindowNativeWindow::initialize(EGLNativeWindowType window, IPropertySet
         // The EGLRenderSurfaceSizeProperty is optional and may be missing. The IPropertySet
         // was prevalidated to contain the EGLNativeWindowType before being passed to
         // this host.
-        result = GetOptionalSizePropertyValue(mPropertyMap, EGLRenderSurfaceSizeProperty, &swapChainSize, &mSwapChainSizeSpecified);
+        result = GetOptionalSizePropertyValue(mPropertyMap, EGLRenderSurfaceSizeProperty,
+                                              &swapChainSize, &mSwapChainSizeSpecified);
         if (FAILED(result))
         {
             return false;
@@ -49,7 +50,8 @@ bool CoreWindowNativeWindow::initialize(EGLNativeWindowType window, IPropertySet
         // The EGLRenderResolutionScaleProperty is optional and may be missing. The IPropertySet
         // was prevalidated to contain the EGLNativeWindowType before being passed to
         // this host.
-        result = GetOptionalSinglePropertyValue(mPropertyMap, EGLRenderResolutionScaleProperty, &mSwapChainScale, &mSwapChainScaleSpecified);
+        result = GetOptionalSinglePropertyValue(mPropertyMap, EGLRenderResolutionScaleProperty,
+                                                &mSwapChainScale, &mSwapChainScaleSpecified);
         if (FAILED(result))
         {
             return false;
@@ -61,10 +63,12 @@ bool CoreWindowNativeWindow::initialize(EGLNativeWindowType window, IPropertySet
             mSwapChainScale = 1.0f;
         }
 
-        // A EGLRenderSurfaceSizeProperty and a EGLRenderResolutionScaleProperty can't both be specified
+        // A EGLRenderSurfaceSizeProperty and a EGLRenderResolutionScaleProperty can't both be
+        // specified
         if (mSwapChainScaleSpecified && mSwapChainSizeSpecified)
         {
-            ERR("It is invalid to specify both an EGLRenderSurfaceSizeProperty and a EGLRenderResolutionScaleProperty.");
+            ERR() << "It is invalid to specify both an EGLRenderSurfaceSizeProperty and a "
+                     "EGLRenderResolutionScaleProperty.";
             return false;
         }
     }
@@ -84,7 +88,7 @@ bool CoreWindowNativeWindow::initialize(EGLNativeWindowType window, IPropertySet
         // the scaling mode setting DXGI_SCALING_STRETCH on the swapchain.
         if (mSwapChainSizeSpecified)
         {
-            mClientRect = { 0, 0, swapChainSize.cx, swapChainSize.cy };
+            mClientRect = {0, 0, swapChainSize.cx, swapChainSize.cy};
         }
         else
         {
@@ -100,7 +104,7 @@ bool CoreWindowNativeWindow::initialize(EGLNativeWindowType window, IPropertySet
 
     if (SUCCEEDED(result))
     {
-        mNewClientRect = mClientRect;
+        mNewClientRect     = mClientRect;
         mClientRectChanged = false;
         return registerForSizeChangeEvents();
     }
@@ -111,7 +115,8 @@ bool CoreWindowNativeWindow::initialize(EGLNativeWindowType window, IPropertySet
 bool CoreWindowNativeWindow::registerForSizeChangeEvents()
 {
     ComPtr<IWindowSizeChangedEventHandler> sizeChangedHandler;
-    HRESULT result = Microsoft::WRL::MakeAndInitialize<CoreWindowSizeChangedHandler>(sizeChangedHandler.ReleaseAndGetAddressOf(), this->shared_from_this());
+    HRESULT result = Microsoft::WRL::MakeAndInitialize<CoreWindowSizeChangedHandler>(
+        sizeChangedHandler.ReleaseAndGetAddressOf(), this->shared_from_this());
     if (SUCCEEDED(result))
     {
         result = mCoreWindow->add_SizeChanged(sizeChangedHandler.Get(), &mSizeChangedEventToken);
@@ -142,30 +147,31 @@ HRESULT CoreWindowNativeWindow::createSwapChain(ID3D11Device *device,
                                                 bool containsAlpha,
                                                 IDXGISwapChain1 **swapChain)
 {
-    if (device == NULL || factory == NULL || swapChain == NULL || width == 0 || height == 0)
+    if (device == nullptr || factory == nullptr || swapChain == nullptr || width == 0 ||
+        height == 0)
     {
         return E_INVALIDARG;
     }
 
-    DXGI_SWAP_CHAIN_DESC1 swapChainDesc = { 0 };
-    swapChainDesc.Width = width;
-    swapChainDesc.Height = height;
-    swapChainDesc.Format = format;
-    swapChainDesc.Stereo = FALSE;
-    swapChainDesc.SampleDesc.Count = 1;
-    swapChainDesc.SampleDesc.Quality = 0;
+    DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {0};
+    swapChainDesc.Width                 = width;
+    swapChainDesc.Height                = height;
+    swapChainDesc.Format                = format;
+    swapChainDesc.Stereo                = FALSE;
+    swapChainDesc.SampleDesc.Count      = 1;
+    swapChainDesc.SampleDesc.Quality    = 0;
     swapChainDesc.BufferUsage =
         DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_BACK_BUFFER;
     swapChainDesc.BufferCount = 2;
-    swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
-    swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
-    swapChainDesc.AlphaMode             = DXGI_ALPHA_MODE_UNSPECIFIED;
-    swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT;
+    swapChainDesc.SwapEffect  = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+    swapChainDesc.Scaling     = DXGI_SCALING_STRETCH;
+    swapChainDesc.AlphaMode   = DXGI_ALPHA_MODE_UNSPECIFIED;
 
     *swapChain = nullptr;
 
     ComPtr<IDXGISwapChain1> newSwapChain;
-    HRESULT result = factory->CreateSwapChainForCoreWindow(device, mCoreWindow.Get(), &swapChainDesc, nullptr, newSwapChain.ReleaseAndGetAddressOf());
+    HRESULT result = factory->CreateSwapChainForCoreWindow(
+        device, mCoreWindow.Get(), &swapChainDesc, nullptr, newSwapChain.ReleaseAndGetAddressOf());
     if (SUCCEEDED(result))
     {
         result = newSwapChain.CopyTo(swapChain);
@@ -199,7 +205,7 @@ HRESULT GetCoreWindowSizeInPixels(const ComPtr<ABI::Windows::UI::Core::ICoreWind
     HRESULT result = coreWindow->get_Bounds(&bounds);
     if (SUCCEEDED(result))
     {
-        *windowSize = { ConvertDipsToPixels(bounds.Width), ConvertDipsToPixels(bounds.Height) };
+        *windowSize = {ConvertDipsToPixels(bounds.Width), ConvertDipsToPixels(bounds.Height)};
     }
 
     return result;
@@ -207,14 +213,20 @@ HRESULT GetCoreWindowSizeInPixels(const ComPtr<ABI::Windows::UI::Core::ICoreWind
 
 static float GetLogicalDpi()
 {
-    ComPtr<ABI::Windows::Graphics::Display::IDisplayPropertiesStatics> displayProperties;
+    ComPtr<ABI::Windows::Graphics::Display::IDisplayInformationStatics> displayInformationStatics;
+    ComPtr<ABI::Windows::Graphics::Display::IDisplayInformation> displayInformation;
 
-    if (SUCCEEDED(GetActivationFactory(HStringReference(RuntimeClass_Windows_Graphics_Display_DisplayProperties).Get(), displayProperties.GetAddressOf())))
+    if (SUCCEEDED(GetActivationFactory(
+            HStringReference(RuntimeClass_Windows_Graphics_Display_DisplayInformation).Get(),
+            displayInformationStatics.GetAddressOf())))
     {
         float dpi = 96.0f;
-        if (SUCCEEDED(displayProperties->get_LogicalDpi(&dpi)))
+        if (SUCCEEDED(displayInformationStatics->GetForCurrentView(&displayInformation)))
         {
-            return dpi;
+            if (SUCCEEDED(displayInformation->get_LogicalDpi(&dpi)))
+            {
+                return dpi;
+            }
         }
     }
 
@@ -227,4 +239,4 @@ float ConvertDipsToPixels(float dips)
     static const float dipsPerInch = 96.0f;
     return dips * GetLogicalDpi() / dipsPerInch;
 }
-}
+}  // namespace rx

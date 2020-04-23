@@ -1,128 +1,106 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="common">
-      <UniqueIdentifier>{2F5FD094-EF52-77F7-7AA8-4327A01BF747}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="common">
-      <UniqueIdentifier>{2F5FD094-EF52-77F7-7AA8-4327A01BF747}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libGLESv2">
-      <UniqueIdentifier>{A62A9415-2E9D-A6D2-631D-1F25A5CD626F}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="libGLESv2\entry_points_egl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libGLESv2\entry_points_egl_ext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libGLESv2\entry_points_gles_1_0_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libGLESv2\entry_points_gles_2_0_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libGLESv2\entry_points_gles_3_0_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libGLESv2\entry_points_gles_3_1_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libGLESv2\entry_points_gles_3_2_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libGLESv2\entry_points_gles_ext_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libGLESv2\global_state.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libGLESv2\libGLESv2_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libGLESv2\proc_table_egl_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\angleutils.h">
-      <Filter>common</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="common\debug.h">
-      <Filter>common</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClCompile Include="libGLESv2\entry_points_egl.cpp">
-      <Filter>libGLESv2</Filter>
-    </ClCompile>
+    <ClInclude Include="libANGLE\entry_points_enum_autogen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libANGLE\entry_points_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="libGLESv2\entry_points_egl.h">
-      <Filter>libGLESv2</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClCompile Include="libGLESv2\entry_points_egl_ext.cpp">
-      <Filter>libGLESv2</Filter>
-    </ClCompile>
     <ClInclude Include="libGLESv2\entry_points_egl_ext.h">
-      <Filter>libGLESv2</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClCompile Include="libGLESv2\entry_points_gles_2_0.cpp">
-      <Filter>libGLESv2</Filter>
-    </ClCompile>
-    <ClInclude Include="libGLESv2\entry_points_gles_2_0.h">
-      <Filter>libGLESv2</Filter>
+    <ClInclude Include="libGLESv2\entry_points_gles_1_0_autogen.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClCompile Include="libGLESv2\entry_points_gles_2_0_ext.cpp">
-      <Filter>libGLESv2</Filter>
-    </ClCompile>
-    <ClInclude Include="libGLESv2\entry_points_gles_2_0_ext.h">
-      <Filter>libGLESv2</Filter>
+    <ClInclude Include="libGLESv2\entry_points_gles_2_0_autogen.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClCompile Include="libGLESv2\entry_points_gles_3_0.cpp">
-      <Filter>libGLESv2</Filter>
-    </ClCompile>
-    <ClInclude Include="libGLESv2\entry_points_gles_3_0.h">
-      <Filter>libGLESv2</Filter>
+    <ClInclude Include="libGLESv2\entry_points_gles_3_0_autogen.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClCompile Include="libGLESv2\entry_points_gles_3_1.cpp">
-      <Filter>libGLESv2</Filter>
-    </ClCompile>
-    <ClInclude Include="libGLESv2\entry_points_gles_3_1.h">
-      <Filter>libGLESv2</Filter>
+    <ClInclude Include="libGLESv2\entry_points_gles_3_1_autogen.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClCompile Include="libGLESv2\global_state.cpp">
-      <Filter>libGLESv2</Filter>
-    </ClCompile>
+    <ClInclude Include="libGLESv2\entry_points_gles_3_2_autogen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libGLESv2\entry_points_gles_ext_autogen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="libGLESv2\global_state.h">
-      <Filter>libGLESv2</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClCompile Include="libGLESv2\libGLESv2.cpp">
-      <Filter>libGLESv2</Filter>
-    </ClCompile>
-    <None Include="libGLESv2\libGLESv2.def">
-      <Filter>libGLESv2</Filter>
-    </None>
-    <ResourceCompile Include="libGLESv2\libGLESv2.rc">
-      <Filter>libGLESv2</Filter>
-    </ResourceCompile>
+    <ClInclude Include="libGLESv2\proc_table_egl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="libGLESv2\resource.h">
-      <Filter>libGLESv2</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <None Include="angle.gyp"/>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="libGLESv2\libGLESv2_autogen.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="libGLESv2\libGLESv2.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{E2AB75E3-DBC2-3F56-83D0-BCE042B88502}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object Libraries">
+      <UniqueIdentifier>{6B8DEDB7-68E2-3D5F-8CFC-C9BA52CA3773}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{41B44175-B2D7-37D6-84A1-4157C7E136AB}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

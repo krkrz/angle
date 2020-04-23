@@ -70,6 +70,14 @@ Issues
     If you need to set individual elements of a uniform array you must query the
     location of the each element you wish to set.
 
+    If a uniform has its location explicitly set within the shader text and a
+    different location set via the API, the assignment in the shader text is
+    used.
+
+    If the location of a statically used uniform set via the API conflicts with
+    the location of a different uniform set in the shader text, linking must
+    fail.
+
 New Tokens
 
     None
@@ -88,7 +96,7 @@ New Procedures and Functions
     (MAX_VERTEX_UNIFORM_VECTORS + MAX_FRAGMENT_UNIFORM_VECTORS) * 4
 
     or less than 0. BindUniformLocation has no effect until the program is
-    linked. In particular, it doesn't modify the bindings of active uniforms
+    linked. In particular, it doesn't modify the bindings of uniform
     variables in a program that has already been linked.
 
     The error INVALID_OPERATION is generated if name starts with the reserved
@@ -109,10 +117,9 @@ New Procedures and Functions
 
     It is possible for an application to bind more than one uniform name to
     the same location.  This is referred to as aliasing.  This will only work
-    if only one of the aliased uniforms is active in the executable program,
-    or if no path through the shader consumes more than one uniform of a set
-    of uniforms aliased to the same location.  If two statically used uniforms
-    in a program are bound to the name location, link must fail.
+    if only one of the aliased uniforms is statically used in the executable
+    program.  If two statically used uniforms in a program are bound to the same
+    location, link must fail.
 
 Errors
 
@@ -129,3 +136,6 @@ Revision History
                  are bound to the same location.
     11/6/2015    Require inactive and non-existing, bound uniform locations
                  to behave like location -1.
+    3/9/2017     Locations set in the shader override ones set by the binding
+                 API.
+    3/26/2018    Clarify that aliasing rules apply to statically used uniforms.

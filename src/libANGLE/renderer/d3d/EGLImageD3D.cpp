@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -11,10 +11,11 @@
 #include "common/debug.h"
 #include "common/utilities.h"
 #include "libANGLE/AttributeMap.h"
+#include "libANGLE/Context.h"
 #include "libANGLE/Texture.h"
+#include "libANGLE/renderer/d3d/RenderTargetD3D.h"
 #include "libANGLE/renderer/d3d/RenderbufferD3D.h"
 #include "libANGLE/renderer/d3d/RendererD3D.h"
-#include "libANGLE/renderer/d3d/RenderTargetD3D.h"
 #include "libANGLE/renderer/d3d/TextureD3D.h"
 #include "libANGLE/renderer/d3d/TextureStorage.h"
 
@@ -22,46 +23,14 @@
 
 namespace rx
 {
-static gl::ImageIndex GetImageIndex(GLenum target, size_t mip, size_t layer)
-{
-    if (target == GL_TEXTURE_3D)
-    {
-        return gl::ImageIndex::Make3D(static_cast<GLint>(mip), static_cast<GLint>(layer));
-    }
-    else
-    {
-        ASSERT(layer == 0);
-        return gl::ImageIndex::MakeGeneric(target, static_cast<GLint>(mip));
-    }
-}
 
-EGLImageD3D::EGLImageD3D(RendererD3D *renderer,
+EGLImageD3D::EGLImageD3D(const egl::ImageState &state,
                          EGLenum target,
-                         egl::ImageSibling *buffer,
-                         const egl::AttributeMap &attribs)
-    : mRenderer(renderer), mBuffer(buffer), mAttachmentBuffer(nullptr), mRenderTarget(nullptr)
+                         const egl::AttributeMap &attribs,
+                         RendererD3D *renderer)
+    : ImageImpl(state), mRenderer(renderer), mRenderTarget(nullptr)
 {
     ASSERT(renderer != nullptr);
-    ASSERT(buffer != nullptr);
-
-    if (egl::IsTextureTarget(target))
-    {
-        mAttachmentBuffer = GetImplAs<TextureD3D>(GetAs<gl::Texture>(buffer));
-        mAttachmentTarget = gl::FramebufferAttachment::Target(
-            GL_NONE, GetImageIndex(egl_gl::EGLImageTargetToGLTextureTarget(target),
-                                   attribs.get(EGL_GL_TEXTURE_LEVEL_KHR, 0),
-                                   attribs.get(EGL_GL_TEXTURE_ZOFFSET_KHR, 0)));
-    }
-    else if (egl::IsRenderbufferTarget(target))
-    {
-        mAttachmentBuffer = GetImplAs<RenderbufferD3D>(GetAs<gl::Renderbuffer>(buffer));
-        mAttachmentTarget =
-            gl::FramebufferAttachment::Target(GL_NONE, gl::ImageIndex::MakeInvalid());
-    }
-    else
-    {
-        UNREACHABLE();
-    }
 }
 
 EGLImageD3D::~EGLImageD3D()
@@ -69,67 +38,53 @@ EGLImageD3D::~EGLImageD3D()
     SafeDelete(mRenderTarget);
 }
 
-egl::Error EGLImageD3D::initialize()
+egl::Error EGLImageD3D::initialize(const egl::Display *display)
 {
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
-gl::Error EGLImageD3D::orphan(egl::ImageSibling *sibling)
+angle::Result EGLImageD3D::orphan(const gl::Context *context, egl::ImageSibling *sibling)
 {
-    if (sibling == mBuffer)
+    if (sibling == mState.source)
     {
-        gl::Error error = copyToLocalRendertarget();
-        if (error.isError())
-        {
-            return error;
-        }
+        ANGLE_TRY(copyToLocalRendertarget(context));
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return angle::Result::Continue;
 }
 
-gl::Error EGLImageD3D::getRenderTarget(RenderTargetD3D **outRT) const
+angle::Result EGLImageD3D::getRenderTarget(const gl::Context *context,
+                                           RenderTargetD3D **outRT) const
 {
-    if (mAttachmentBuffer)
+    if (mState.source != nullptr)
     {
+        ASSERT(!mRenderTarget);
         FramebufferAttachmentRenderTarget *rt = nullptr;
-        gl::Error error = mAttachmentBuffer->getAttachmentRenderTarget(mAttachmentTarget, &rt);
-        if (error.isError())
-        {
-            return error;
-        }
-
+        ANGLE_TRY(
+            mState.source->getAttachmentRenderTarget(context, GL_NONE, mState.imageIndex, 0, &rt));
         *outRT = static_cast<RenderTargetD3D *>(rt);
-        return gl::Error(GL_NO_ERROR);
+        return angle::Result::Continue;
     }
-    else
-    {
-        ASSERT(mRenderTarget);
-        *outRT = mRenderTarget;
-        return gl::Error(GL_NO_ERROR);
-    }
+
+    ASSERT(mRenderTarget);
+    *outRT = mRenderTarget;
+    return angle::Result::Continue;
 }
 
-gl::Error EGLImageD3D::copyToLocalRendertarget()
+angle::Result EGLImageD3D::copyToLocalRendertarget(const gl::Context *context)
 {
-    ASSERT(mBuffer != nullptr);
-    ASSERT(mAttachmentBuffer != nullptr);
+    ASSERT(mState.source != nullptr);
     ASSERT(mRenderTarget == nullptr);
 
     RenderTargetD3D *curRenderTarget = nullptr;
-    gl::Error error = getRenderTarget(&curRenderTarget);
-    if (error.isError())
+    ANGLE_TRY(getRenderTarget(context, &curRenderTarget));
+
+    // Invalidate FBOs with this Image attached. Only currently applies to D3D11.
+    for (egl::ImageSibling *target : mState.targets)
     {
-        return error;
+        target->onStateChange(angle::SubjectMessage::SubjectChanged);
     }
 
-    // This only currently applies do D3D11, where it invalidates FBOs with this Image attached.
-    curRenderTarget->signalDirty();
-
-    // Clear the source image buffers
-    mBuffer           = nullptr;
-    mAttachmentBuffer = nullptr;
-
-    return mRenderer->createRenderTargetCopy(curRenderTarget, &mRenderTarget);
+    return mRenderer->createRenderTargetCopy(context, curRenderTarget, &mRenderTarget);
 }
-}
+}  // namespace rx

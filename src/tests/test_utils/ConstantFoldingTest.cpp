@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -9,57 +9,59 @@
 
 #include "tests/test_utils/ConstantFoldingTest.h"
 
+#include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "compiler/translator/TranslatorESSL.h"
-#include "GLSLANG/ShaderLang.h"
 
 using namespace sh;
 
-void ConstantFoldingTest::SetUp()
-{
-    allocator.push();
-    SetGlobalPoolAllocator(&allocator);
-    ShBuiltInResources resources;
-    InitBuiltInResources(&resources);
-
-    mTranslatorESSL = new TranslatorESSL(GL_FRAGMENT_SHADER, SH_GLES3_SPEC);
-    ASSERT_TRUE(mTranslatorESSL->Init(resources));
-}
-
-void ConstantFoldingTest::TearDown()
-{
-    delete mTranslatorESSL;
-    SetGlobalPoolAllocator(NULL);
-    allocator.pop();
-}
-
-void ConstantFoldingTest::compile(const std::string &shaderString)
-{
-    const char *shaderStrings[] = {shaderString.c_str()};
-
-    mASTRoot = mTranslatorESSL->compileTreeForTesting(shaderStrings, 1, SH_OBJECT_CODE);
-    if (!mASTRoot)
-    {
-        TInfoSink &infoSink = mTranslatorESSL->getInfoSink();
-        FAIL() << "Shader compilation into ESSL failed " << infoSink.info.c_str();
-    }
-}
-
-bool ConstantFoldingTest::hasWarning()
-{
-    TInfoSink &infoSink = mTranslatorESSL->getInfoSink();
-    return infoSink.info.str().find("WARNING:") != std::string::npos;
-}
-
 void ConstantFoldingExpressionTest::evaluateFloat(const std::string &floatExpression)
 {
+    // We first assign the expression into a const variable so we can also verify that it gets
+    // qualified as a constant expression. We then assign that constant expression into my_FragColor
+    // to make sure that the value is not pruned.
     std::stringstream shaderStream;
-    shaderStream << "#version 300 es\n"
+    shaderStream << "#version 310 es\n"
                     "precision mediump float;\n"
                     "out float my_FragColor;\n"
                     "void main()\n"
                     "{\n"
-                 << "    my_FragColor = " << floatExpression << ";\n"
-                 << "}\n";
-    compile(shaderStream.str());
+                 << "    const float f = " << floatExpression << ";\n"
+                 << "    my_FragColor = f;\n"
+                    "}\n";
+    compileAssumeSuccess(shaderStream.str());
+}
+
+void ConstantFoldingExpressionTest::evaluateInt(const std::string &intExpression)
+{
+    // We first assign the expression into a const variable so we can also verify that it gets
+    // qualified as a constant expression. We then assign that constant expression into my_FragColor
+    // to make sure that the value is not pruned.
+    std::stringstream shaderStream;
+    shaderStream << "#version 310 es\n"
+                    "precision mediump int;\n"
+                    "out int my_FragColor;\n"
+                    "void main()\n"
+                    "{\n"
+                 << "    const int i = " << intExpression << ";\n"
+                 << "    my_FragColor = i;\n"
+                    "}\n";
+    compileAssumeSuccess(shaderStream.str());
+}
+
+void ConstantFoldingExpressionTest::evaluateUint(const std::string &uintExpression)
+{
+    // We first assign the expression into a const variable so we can also verify that it gets
+    // qualified as a constant expression. We then assign that constant expression into my_FragColor
+    // to make sure that the value is not pruned.
+    std::stringstream shaderStream;
+    shaderStream << "#version 310 es\n"
+                    "precision mediump int;\n"
+                    "out uint my_FragColor;\n"
+                    "void main()\n"
+                    "{\n"
+                 << "    const uint u = " << uintExpression << ";\n"
+                 << "    my_FragColor = u;\n"
+                    "}\n";
+    compileAssumeSuccess(shaderStream.str());
 }

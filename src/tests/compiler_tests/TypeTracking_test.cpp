@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -8,10 +8,10 @@
 //   precision.
 //
 
-#include "angle_gl.h"
-#include "gtest/gtest.h"
 #include "GLSLANG/ShaderLang.h"
+#include "angle_gl.h"
 #include "compiler/translator/TranslatorESSL.h"
+#include "gtest/gtest.h"
 
 using namespace sh;
 
@@ -27,28 +27,25 @@ class TypeTrackingTest : public testing::Test
         InitBuiltInResources(&resources);
         resources.FragmentPrecisionHigh = 1;
 
-        mTranslator = new TranslatorESSL(GL_FRAGMENT_SHADER, SH_GLES3_SPEC);
+        mTranslator = new TranslatorESSL(GL_FRAGMENT_SHADER, SH_GLES3_1_SPEC);
         ASSERT_TRUE(mTranslator->Init(resources));
     }
 
     void TearDown() override { delete mTranslator; }
 
-    void compile(const std::string& shaderString)
+    void compile(const std::string &shaderString)
     {
-        const char *shaderStrings[] = { shaderString.c_str() };
-        bool compilationSuccess = mTranslator->compile(shaderStrings, 1, SH_INTERMEDIATE_TREE);
-        TInfoSink &infoSink = mTranslator->getInfoSink();
+        const char *shaderStrings[] = {shaderString.c_str()};
+        bool compilationSuccess     = mTranslator->compile(shaderStrings, 1, SH_INTERMEDIATE_TREE);
+        TInfoSink &infoSink         = mTranslator->getInfoSink();
         mInfoLog                    = RemoveSymbolIdsFromInfoLog(infoSink.info.c_str());
         if (!compilationSuccess)
             FAIL() << "Shader compilation failed " << mInfoLog;
     }
 
-    bool foundErrorInIntermediateTree() const
-    {
-        return foundInIntermediateTree("ERROR:");
-    }
+    bool foundErrorInIntermediateTree() const { return foundInIntermediateTree("ERROR:"); }
 
-    bool foundInIntermediateTree(const char* stringToFind) const
+    bool foundInIntermediateTree(const char *stringToFind) const
     {
         return mInfoLog.find(stringToFind) != std::string::npos;
     }
@@ -75,7 +72,7 @@ class TypeTrackingTest : public testing::Test
     std::string mInfoLog;
 };
 
-TEST_F(TypeTrackingTest, FunctionPrototypeMangling)
+TEST_F(TypeTrackingTest, FunctionPrototype)
 {
     const std::string &shaderString =
         "precision mediump float;\n"
@@ -90,8 +87,7 @@ TEST_F(TypeTrackingTest, FunctionPrototypeMangling)
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("Function Prototype: fun(f1;"));
-    ASSERT_TRUE(foundInIntermediateTree("Function Definition: fun(f1;"));
+    ASSERT_TRUE(foundInIntermediateTree("Function Prototype: fun"));
 }
 
 TEST_F(TypeTrackingTest, BuiltInFunctionResultPrecision)
@@ -105,7 +101,7 @@ TEST_F(TypeTrackingTest, BuiltInFunctionResultPrecision)
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("sine (mediump float)"));
+    ASSERT_TRUE(foundInIntermediateTree("sin (mediump float)"));
 }
 
 TEST_F(TypeTrackingTest, BinaryMathResultPrecision)
@@ -136,7 +132,7 @@ TEST_F(TypeTrackingTest, BuiltInVecFunctionResultTypeAndPrecision)
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
     ASSERT_TRUE(foundInIntermediateTree("length (mediump float)"));
-    ASSERT_TRUE(foundInIntermediateTree("dot-product (mediump float)"));
+    ASSERT_TRUE(foundInIntermediateTree("dot product (mediump float)"));
     ASSERT_TRUE(foundInIntermediateTree("distance (mediump float)"));
 }
 
@@ -154,16 +150,17 @@ TEST_F(TypeTrackingTest, BuiltInMatFunctionResultTypeAndPrecision)
         "   mat2x4 tmp24 = mat2x4(m);\n"
         "   mat4x3 tmp43 = mat4x3(m);\n"
         "   mat3x4 tmp34 = mat3x4(m);\n"
-        "   my_FragColor = vec4(tmp32[2][1] * tmp23[1][2], tmp42[3][1] * tmp24[1][3], tmp43[3][2] * tmp34[2][3], 1.0);\n"
+        "   my_FragColor = vec4(tmp32[2][1] * tmp23[1][2], tmp42[3][1] * tmp24[1][3], tmp43[3][2] "
+        "* tmp34[2][3], 1.0);\n"
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("Construct mat2x3 (mediump 2X3 matrix of float)"));
-    ASSERT_TRUE(foundInIntermediateTree("Construct mat3x2 (mediump 3X2 matrix of float)"));
-    ASSERT_TRUE(foundInIntermediateTree("Construct mat2x4 (mediump 2X4 matrix of float)"));
-    ASSERT_TRUE(foundInIntermediateTree("Construct mat4x2 (mediump 4X2 matrix of float)"));
-    ASSERT_TRUE(foundInIntermediateTree("Construct mat3x4 (mediump 3X4 matrix of float)"));
-    ASSERT_TRUE(foundInIntermediateTree("Construct mat4x3 (mediump 4X3 matrix of float)"));
+    ASSERT_TRUE(foundInIntermediateTree("Construct (mediump 2X3 matrix of float)"));
+    ASSERT_TRUE(foundInIntermediateTree("Construct (mediump 3X2 matrix of float)"));
+    ASSERT_TRUE(foundInIntermediateTree("Construct (mediump 2X4 matrix of float)"));
+    ASSERT_TRUE(foundInIntermediateTree("Construct (mediump 4X2 matrix of float)"));
+    ASSERT_TRUE(foundInIntermediateTree("Construct (mediump 3X4 matrix of float)"));
+    ASSERT_TRUE(foundInIntermediateTree("Construct (mediump 4X3 matrix of float)"));
 }
 
 TEST_F(TypeTrackingTest, BuiltInFunctionChoosesHigherPrecision)
@@ -179,7 +176,7 @@ TEST_F(TypeTrackingTest, BuiltInFunctionChoosesHigherPrecision)
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("dot-product (mediump float)"));
+    ASSERT_TRUE(foundInIntermediateTree("dot product (mediump float)"));
     ASSERT_TRUE(foundInIntermediateTree("distance (mediump float)"));
 }
 
@@ -197,7 +194,7 @@ TEST_F(TypeTrackingTest, BuiltInBoolFunctionResultType)
     ASSERT_FALSE(foundErrorInIntermediateTree());
     ASSERT_TRUE(foundInIntermediateTree("any (bool)"));
     ASSERT_TRUE(foundInIntermediateTree("all (bool)"));
-    ASSERT_TRUE(foundInIntermediateTree("Negate conditional (4-component vector of bool)"));
+    ASSERT_TRUE(foundInIntermediateTree("component-wise not (4-component vector of bool)"));
 }
 
 TEST_F(TypeTrackingTest, BuiltInVecToBoolFunctionResultType)
@@ -215,14 +212,16 @@ TEST_F(TypeTrackingTest, BuiltInVecToBoolFunctionResultType)
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("Less Than (2-component vector of bool)"));
-    ASSERT_TRUE(foundInIntermediateTree("Greater Than (2-component vector of bool)"));
+    ASSERT_TRUE(foundInIntermediateTree("component-wise less than (2-component vector of bool)"));
+    ASSERT_TRUE(
+        foundInIntermediateTree("component-wise greater than (2-component vector of bool)"));
 }
 
 TEST_F(TypeTrackingTest, Texture2DResultTypeAndPrecision)
 {
     // ESSL spec section 4.5.3: sampler2D and samplerCube are lowp by default
-    // ESSL spec section 8: For the texture functions, the precision of the return type matches the precision of the sampler type.
+    // ESSL spec section 8: For the texture functions, the precision of the return type matches the
+    // precision of the sampler type.
     const std::string &shaderString =
         "precision mediump float;\n"
         "uniform sampler2D s;\n"
@@ -233,13 +232,14 @@ TEST_F(TypeTrackingTest, Texture2DResultTypeAndPrecision)
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("texture2D(s21;vf2; (lowp 4-component vector of float)"));
+    ASSERT_TRUE(foundInIntermediateTree("texture2D (lowp 4-component vector of float)"));
 }
 
 TEST_F(TypeTrackingTest, TextureCubeResultTypeAndPrecision)
 {
     // ESSL spec section 4.5.3: sampler2D and samplerCube are lowp by default
-    // ESSL spec section 8: For the texture functions, the precision of the return type matches the precision of the sampler type.
+    // ESSL spec section 8: For the texture functions, the precision of the return type matches the
+    // precision of the sampler type.
     const std::string &shaderString =
         "precision mediump float;\n"
         "uniform samplerCube sc;\n"
@@ -250,7 +250,7 @@ TEST_F(TypeTrackingTest, TextureCubeResultTypeAndPrecision)
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("textureCube(sC1;vf3; (lowp 4-component vector of float)"));
+    ASSERT_TRUE(foundInIntermediateTree("textureCube (lowp 4-component vector of float)"));
 }
 
 TEST_F(TypeTrackingTest, TextureSizeResultTypeAndPrecision)
@@ -271,7 +271,7 @@ TEST_F(TypeTrackingTest, TextureSizeResultTypeAndPrecision)
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("textureSize(s21;i1; (highp 2-component vector of int)"));
+    ASSERT_TRUE(foundInIntermediateTree("textureSize (highp 2-component vector of int)"));
 }
 
 TEST_F(TypeTrackingTest, BuiltInConstructorResultTypeAndPrecision)
@@ -288,7 +288,7 @@ TEST_F(TypeTrackingTest, BuiltInConstructorResultTypeAndPrecision)
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("Construct vec4 (mediump 4-component vector of float)"));
+    ASSERT_TRUE(foundInIntermediateTree("Construct (mediump 4-component vector of float)"));
 }
 
 TEST_F(TypeTrackingTest, StructConstructorResultNoPrecision)
@@ -304,7 +304,7 @@ TEST_F(TypeTrackingTest, StructConstructorResultNoPrecision)
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("Construct structure (structure)"));
+    ASSERT_TRUE(foundInIntermediateTree("Construct (structure)"));
 }
 
 TEST_F(TypeTrackingTest, PackResultTypeAndPrecision)
@@ -328,9 +328,9 @@ TEST_F(TypeTrackingTest, PackResultTypeAndPrecision)
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("pack Snorm 2x16 (highp uint)"));
-    ASSERT_TRUE(foundInIntermediateTree("pack Unorm 2x16 (highp uint)"));
-    ASSERT_TRUE(foundInIntermediateTree("pack half 2x16 (highp uint)"));
+    ASSERT_TRUE(foundInIntermediateTree("packSnorm2x16 (highp uint)"));
+    ASSERT_TRUE(foundInIntermediateTree("packUnorm2x16 (highp uint)"));
+    ASSERT_TRUE(foundInIntermediateTree("packHalf2x16 (highp uint)"));
 }
 
 TEST_F(TypeTrackingTest, UnpackNormResultTypeAndPrecision)
@@ -353,8 +353,8 @@ TEST_F(TypeTrackingTest, UnpackNormResultTypeAndPrecision)
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("unpack Snorm 2x16 (highp 2-component vector of float)"));
-    ASSERT_TRUE(foundInIntermediateTree("unpack Unorm 2x16 (highp 2-component vector of float)"));
+    ASSERT_TRUE(foundInIntermediateTree("unpackSnorm2x16 (highp 2-component vector of float)"));
+    ASSERT_TRUE(foundInIntermediateTree("unpackUnorm2x16 (highp 2-component vector of float)"));
 }
 
 TEST_F(TypeTrackingTest, UnpackHalfResultTypeAndPrecision)
@@ -376,7 +376,7 @@ TEST_F(TypeTrackingTest, UnpackHalfResultTypeAndPrecision)
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("unpack half 2x16 (mediump 2-component vector of float)"));
+    ASSERT_TRUE(foundInIntermediateTree("unpackHalf2x16 (mediump 2-component vector of float)"));
 }
 
 TEST_F(TypeTrackingTest, BuiltInAbsSignFunctionFloatResultTypeAndPrecision)
@@ -387,12 +387,12 @@ TEST_F(TypeTrackingTest, BuiltInAbsSignFunctionFloatResultTypeAndPrecision)
         "void main() {\n"
         "   float fval2 = abs(fval1);\n"
         "   float fval3 = sign(fval1);\n"
-        "   gl_FragColor = vec4(fval1, 0.0, 0.0, 1.0); \n"
+        "   gl_FragColor = vec4(fval1, fval2, fval3, 1.0); \n"
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("Absolute value (mediump float)"));
-    ASSERT_TRUE(foundInIntermediateTree("Sign (mediump float)"));
+    ASSERT_TRUE(foundInIntermediateTree("abs (mediump float)"));
+    ASSERT_TRUE(foundInIntermediateTree("sign (mediump float)"));
 }
 
 TEST_F(TypeTrackingTest, BuiltInAbsSignFunctionIntResultTypeAndPrecision)
@@ -406,12 +406,12 @@ TEST_F(TypeTrackingTest, BuiltInAbsSignFunctionIntResultTypeAndPrecision)
         "void main() {\n"
         "   int ival2 = abs(ival1);\n"
         "   int ival3 = sign(ival1);\n"
-        "   my_FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n"
+        "   my_FragColor = vec4(ival2, ival3, 0, 1); \n"
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("Absolute value (mediump int)"));
-    ASSERT_TRUE(foundInIntermediateTree("Sign (mediump int)"));
+    ASSERT_TRUE(foundInIntermediateTree("abs (mediump int)"));
+    ASSERT_TRUE(foundInIntermediateTree("sign (mediump int)"));
 }
 
 TEST_F(TypeTrackingTest, BuiltInFloatBitsToIntResultTypeAndPrecision)
@@ -426,12 +426,12 @@ TEST_F(TypeTrackingTest, BuiltInFloatBitsToIntResultTypeAndPrecision)
         "void main() {\n"
         "   int i = floatBitsToInt(f);\n"
         "   uint u = floatBitsToUint(f);\n"
-        "   my_FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n"
+        "   my_FragColor = vec4(i, int(u), 0, 1); \n"
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("float bits to int (highp int)"));
-    ASSERT_TRUE(foundInIntermediateTree("float bits to uint (highp uint)"));
+    ASSERT_TRUE(foundInIntermediateTree("floatBitsToInt (highp int)"));
+    ASSERT_TRUE(foundInIntermediateTree("floatBitsToUint (highp uint)"));
 }
 
 TEST_F(TypeTrackingTest, BuiltInIntBitsToFloatResultTypeAndPrecision)
@@ -451,6 +451,195 @@ TEST_F(TypeTrackingTest, BuiltInIntBitsToFloatResultTypeAndPrecision)
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("int bits to float (highp float)"));
-    ASSERT_TRUE(foundInIntermediateTree("uint bits to float (highp float)"));
+    ASSERT_TRUE(foundInIntermediateTree("intBitsToFloat (highp float)"));
+    ASSERT_TRUE(foundInIntermediateTree("uintBitsToFloat (highp float)"));
+}
+
+// Test that bitfieldExtract returns a precision consistent with its "value" parameter.
+TEST_F(TypeTrackingTest, BuiltInBitfieldExtractResultTypeAndPrecision)
+{
+    const std::string &shaderString =
+        "#version 310 es\n"
+        "precision mediump float;\n"
+        "uniform mediump int i;\n"
+        "uniform highp uint u;\n"
+        "uniform lowp int offset;\n"
+        "uniform highp int bits;\n"
+        "out vec4 my_FragColor;\n"
+        "void main() {\n"
+        "   lowp int i2 = bitfieldExtract(i, offset, bits);\n"
+        "   lowp uint u2 = bitfieldExtract(u, offset, bits);\n"
+        "   my_FragColor = vec4(i2, u2, 0.0, 1.0); \n"
+        "}\n";
+    compile(shaderString);
+    ASSERT_FALSE(foundErrorInIntermediateTree());
+    ASSERT_TRUE(foundInIntermediateTree("bitfieldExtract (mediump int)"));
+    ASSERT_TRUE(foundInIntermediateTree("bitfieldExtract (highp uint)"));
+}
+
+// Test that signed bitfieldInsert returns a precision consistent with its "base/insert" parameters.
+TEST_F(TypeTrackingTest, BuiltInBitfieldInsertResultTypeAndPrecision)
+{
+    const std::string &shaderString =
+        "#version 310 es\n"
+        "precision mediump float;\n"
+        "uniform lowp int iBase;\n"
+        "uniform mediump int iInsert;\n"
+        "uniform highp uint uBase;\n"
+        "uniform mediump uint uInsert;\n"
+        "uniform highp int offset;\n"
+        "uniform highp int bits;\n"
+        "out vec4 my_FragColor;\n"
+        "void main() {\n"
+        "   lowp int i = bitfieldInsert(iBase, iInsert, offset, bits);\n"
+        "   lowp uint u = bitfieldInsert(uBase, uInsert, offset, bits);\n"
+        "   my_FragColor = vec4(i, u, 0.0, 1.0); \n"
+        "}\n";
+    compile(shaderString);
+    ASSERT_FALSE(foundErrorInIntermediateTree());
+    ASSERT_TRUE(foundInIntermediateTree("bitfieldInsert (mediump int)"));
+    ASSERT_TRUE(foundInIntermediateTree("bitfieldInsert (highp uint)"));
+}
+
+// Test that signed bitfieldInsert returns a precision consistent with its "base/insert" parameters.
+// Another variation on parameter precisions.
+TEST_F(TypeTrackingTest, BuiltInBitfieldInsertResultTypeAndPrecision2)
+{
+    const std::string &shaderString =
+        "#version 310 es\n"
+        "precision mediump float;\n"
+        "uniform highp int iBase;\n"
+        "uniform mediump int iInsert;\n"
+        "uniform lowp uint uBase;\n"
+        "uniform mediump uint uInsert;\n"
+        "uniform lowp int offset;\n"
+        "uniform lowp int bits;\n"
+        "out vec4 my_FragColor;\n"
+        "void main() {\n"
+        "   lowp int i = bitfieldInsert(iBase, iInsert, offset, bits);\n"
+        "   lowp uint u = bitfieldInsert(uBase, uInsert, offset, bits);\n"
+        "   my_FragColor = vec4(i, u, 0.0, 1.0); \n"
+        "}\n";
+    compile(shaderString);
+    ASSERT_FALSE(foundErrorInIntermediateTree());
+    ASSERT_TRUE(foundInIntermediateTree("bitfieldInsert (highp int)"));
+    ASSERT_TRUE(foundInIntermediateTree("bitfieldInsert (mediump uint)"));
+}
+
+// Test that bitfieldReverse always results in highp precision.
+TEST_F(TypeTrackingTest, BuiltInBitfieldReversePrecision)
+{
+    const std::string &shaderString =
+        "#version 310 es\n"
+        "precision mediump float;\n"
+        "uniform lowp uint u;\n"
+        "uniform mediump int i;\n"
+        "out vec4 my_FragColor;\n"
+        "void main() {\n"
+        "   lowp uint u2 = bitfieldReverse(u);\n"
+        "   lowp int i2 = bitfieldReverse(i);\n"
+        "   my_FragColor = vec4(u2, i2, 0.0, 1.0); \n"
+        "}\n";
+    compile(shaderString);
+    ASSERT_FALSE(foundErrorInIntermediateTree());
+    ASSERT_TRUE(foundInIntermediateTree("bitfieldReverse (highp uint)"));
+    ASSERT_TRUE(foundInIntermediateTree("bitfieldReverse (highp int)"));
+}
+
+// Test that bitCount always results in lowp precision integer.
+TEST_F(TypeTrackingTest, BuiltInBitCountTypeAndPrecision)
+{
+    const std::string &shaderString =
+        "#version 310 es\n"
+        "precision mediump float;\n"
+        "uniform highp uint u;\n"
+        "uniform mediump int i;\n"
+        "out vec4 my_FragColor;\n"
+        "void main() {\n"
+        "   highp int count1 = bitCount(u);\n"
+        "   highp int count2 = bitCount(i);\n"
+        "   my_FragColor = vec4(count1, count2, 0.0, 1.0); \n"
+        "}\n";
+    compile(shaderString);
+    ASSERT_FALSE(foundErrorInIntermediateTree());
+    ASSERT_TRUE(foundInIntermediateTree("bitCount (lowp int)"));
+    ASSERT_FALSE(foundInIntermediateTree("bitCount (lowp uint)"));
+}
+
+// Test that findLSB always results in a lowp precision integer.
+TEST_F(TypeTrackingTest, BuiltInFindLSBTypeAndPrecision)
+{
+    const std::string &shaderString =
+        "#version 310 es\n"
+        "precision mediump float;\n"
+        "uniform highp uint u;\n"
+        "uniform mediump int i;\n"
+        "out vec4 my_FragColor;\n"
+        "void main() {\n"
+        "   highp int index1 = findLSB(u);\n"
+        "   highp int index2 = findLSB(i);\n"
+        "   my_FragColor = vec4(index1, index2, 0.0, 1.0); \n"
+        "}\n";
+    compile(shaderString);
+    ASSERT_FALSE(foundErrorInIntermediateTree());
+    ASSERT_TRUE(foundInIntermediateTree("findLSB (lowp int)"));
+    ASSERT_FALSE(foundInIntermediateTree("findLSB (lowp uint)"));
+}
+
+// Test that findMSB always results in a lowp precision integer.
+TEST_F(TypeTrackingTest, BuiltInFindMSBTypeAndPrecision)
+{
+    const std::string &shaderString =
+        "#version 310 es\n"
+        "precision mediump float;\n"
+        "uniform highp uint u;\n"
+        "uniform mediump int i;\n"
+        "out vec4 my_FragColor;\n"
+        "void main() {\n"
+        "   highp int index1 = findMSB(u);\n"
+        "   highp int index2 = findMSB(i);\n"
+        "   my_FragColor = vec4(index1, index2, 0.0, 1.0); \n"
+        "}\n";
+    compile(shaderString);
+    ASSERT_FALSE(foundErrorInIntermediateTree());
+    ASSERT_TRUE(foundInIntermediateTree("findMSB (lowp int)"));
+    ASSERT_FALSE(foundInIntermediateTree("findMSB (lowp uint)"));
+}
+
+// Test that uaddCarry always results in highp precision.
+TEST_F(TypeTrackingTest, BuiltInUaddCarryPrecision)
+{
+    const std::string &shaderString =
+        "#version 310 es\n"
+        "precision mediump float;\n"
+        "uniform mediump uvec2 x;\n"
+        "uniform mediump uvec2 y;\n"
+        "out vec4 my_FragColor;\n"
+        "void main() {\n"
+        "   lowp uvec2 carry;\n"
+        "   mediump uvec2 result = uaddCarry(x, y, carry);\n"
+        "   my_FragColor = vec4(result.x, carry.y, 0.0, 1.0); \n"
+        "}\n";
+    compile(shaderString);
+    ASSERT_FALSE(foundErrorInIntermediateTree());
+    ASSERT_TRUE(foundInIntermediateTree("uaddCarry (highp 2-component vector of uint)"));
+}
+
+// Test that usubBorrow always results in highp precision.
+TEST_F(TypeTrackingTest, BuiltInUsubBorrowPrecision)
+{
+    const std::string &shaderString =
+        "#version 310 es\n"
+        "precision mediump float;\n"
+        "uniform mediump uvec2 x;\n"
+        "uniform mediump uvec2 y;\n"
+        "out vec4 my_FragColor;\n"
+        "void main() {\n"
+        "   lowp uvec2 borrow;\n"
+        "   mediump uvec2 result = usubBorrow(x, y, borrow);\n"
+        "   my_FragColor = vec4(result.x, borrow.y, 0.0, 1.0); \n"
+        "}\n";
+    compile(shaderString);
+    ASSERT_FALSE(foundErrorInIntermediateTree());
+    ASSERT_TRUE(foundInIntermediateTree("usubBorrow (highp 2-component vector of uint)"));
 }

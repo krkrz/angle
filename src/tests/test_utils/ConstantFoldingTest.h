@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -13,9 +13,10 @@
 #include <vector>
 
 #include "common/mathutil.h"
-#include "compiler/translator/IntermNode.h"
-#include "compiler/translator/PoolAlloc.h"
-#include "gtest/gtest.h"
+#include "compiler/translator/tree_util/FindMain.h"
+#include "compiler/translator/tree_util/FindSymbolNode.h"
+#include "compiler/translator/tree_util/IntermTraverse.h"
+#include "tests/test_utils/ShaderCompileTreeTest.h"
 
 namespace sh
 {
@@ -31,16 +32,14 @@ class ConstantFinder : public TIntermTraverser
           mConstantVector(constantVector),
           mFaultTolerance(T()),
           mFound(false)
-    {
-    }
+    {}
 
     ConstantFinder(const std::vector<T> &constantVector, const T &faultTolerance)
         : TIntermTraverser(true, false, false),
           mConstantVector(constantVector),
           mFaultTolerance(faultTolerance),
           mFound(false)
-    {
-    }
+    {}
 
     ConstantFinder(const T &value)
         : TIntermTraverser(true, false, false), mFaultTolerance(T()), mFound(false)
@@ -55,7 +54,7 @@ class ConstantFinder : public TIntermTraverser
             bool found = true;
             for (size_t i = 0; i < mConstantVector.size(); i++)
             {
-                if (!isEqual(node->getUnionArrayPointer()[i], mConstantVector[i]))
+                if (!isEqual(node->getConstantValue()[i], mConstantVector[i]))
                 {
                     found = false;
                     break;
@@ -132,20 +131,14 @@ class ConstantFinder : public TIntermTraverser
     bool mFound;
 };
 
-class ConstantFoldingTest : public testing::Test
+class ConstantFoldingTest : public ShaderCompileTreeTest
 {
   public:
     ConstantFoldingTest() {}
 
   protected:
-    void SetUp() override;
-
-    void TearDown() override;
-
-    void compile(const std::string &shaderString);
-
-    // Must be called after compile()
-    bool hasWarning();
+    ::GLenum getShaderType() const override { return GL_FRAGMENT_SHADER; }
+    ShShaderSpec getShaderSpec() const override { return SH_GLES3_1_SPEC; }
 
     template <typename T>
     bool constantFoundInAST(T constant)
@@ -177,11 +170,15 @@ class ConstantFoldingTest : public testing::Test
         return finder.found();
     }
 
-  private:
-    TranslatorESSL *mTranslatorESSL;
-    TIntermNode *mASTRoot;
+    bool symbolFoundInAST(const char *symbolName)
+    {
+        return FindSymbolNode(mASTRoot, ImmutableString(symbolName)) != nullptr;
+    }
 
-    TPoolAllocator allocator;
+    bool symbolFoundInMain(const char *symbolName)
+    {
+        return FindSymbolNode(FindMain(mASTRoot), ImmutableString(symbolName)) != nullptr;
+    }
 };
 
 class ConstantFoldingExpressionTest : public ConstantFoldingTest
@@ -190,6 +187,8 @@ class ConstantFoldingExpressionTest : public ConstantFoldingTest
     ConstantFoldingExpressionTest() {}
 
     void evaluateFloat(const std::string &floatExpression);
+    void evaluateInt(const std::string &intExpression);
+    void evaluateUint(const std::string &uintExpression);
 };
 
 }  // namespace sh

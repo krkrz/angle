@@ -1,34 +1,26 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
 
 #include "compiler/translator/InfoSink.h"
 
+#include "compiler/translator/ImmutableString.h"
+#include "compiler/translator/Types.h"
+
 namespace sh
 {
 
-void TInfoSinkBase::prefix(TPrefixType p)
+void TInfoSinkBase::prefix(Severity severity)
 {
-    switch (p)
+    switch (severity)
     {
-        case EPrefixNone:
-            break;
-        case EPrefixWarning:
+        case SH_WARNING:
             sink.append("WARNING: ");
             break;
-        case EPrefixError:
+        case SH_ERROR:
             sink.append("ERROR: ");
-            break;
-        case EPrefixInternalError:
-            sink.append("INTERNAL ERROR: ");
-            break;
-        case EPrefixUnimplemented:
-            sink.append("UNIMPLEMENTED: ");
-            break;
-        case EPrefixNote:
-            sink.append("NOTE: ");
             break;
         default:
             sink.append("UNKOWN ERROR: ");
@@ -36,9 +28,71 @@ void TInfoSinkBase::prefix(TPrefixType p)
     }
 }
 
+TInfoSinkBase &TInfoSinkBase::operator<<(const ImmutableString &str)
+{
+    sink.append(str.data());
+    return *this;
+}
+
+TInfoSinkBase &TInfoSinkBase::operator<<(const TType &type)
+{
+    if (type.isInvariant())
+        sink.append("invariant ");
+    if (type.getQualifier() != EvqTemporary && type.getQualifier() != EvqGlobal)
+    {
+        sink.append(type.getQualifierString());
+        sink.append(" ");
+    }
+    if (type.getPrecision() != EbpUndefined)
+    {
+        sink.append(type.getPrecisionString());
+        sink.append(" ");
+    }
+
+    const TMemoryQualifier &memoryQualifier = type.getMemoryQualifier();
+    if (memoryQualifier.readonly)
+    {
+        sink.append("readonly ");
+    }
+    if (memoryQualifier.writeonly)
+    {
+        sink.append("writeonly ");
+    }
+    if (memoryQualifier.coherent)
+    {
+        sink.append("coherent ");
+    }
+    if (memoryQualifier.restrictQualifier)
+    {
+        sink.append("restrict ");
+    }
+    if (memoryQualifier.volatileQualifier)
+    {
+        sink.append("volatile ");
+    }
+
+    if (type.isArray())
+    {
+        for (auto arraySizeIter = type.getArraySizes().rbegin();
+             arraySizeIter != type.getArraySizes().rend(); ++arraySizeIter)
+        {
+            *this << "array[" << (*arraySizeIter) << "] of ";
+        }
+    }
+    if (type.isMatrix())
+    {
+        *this << type.getCols() << "X" << type.getRows() << " matrix of ";
+    }
+    else if (type.isVector())
+        *this << type.getNominalSize() << "-component vector of ";
+
+    sink.append(type.getBasicString());
+    return *this;
+}
+
 void TInfoSinkBase::location(int file, int line)
 {
-    TPersistStringStream stream;
+    TPersistStringStream stream = sh::InitializeStream<TPersistStringStream>();
     if (line)
         stream << file << ":" << line;
     else
@@ -46,19 +100,6 @@ void TInfoSinkBase::location(int file, int line)
     stream << ": ";
 
     sink.append(stream.str());
-}
-
-void TInfoSinkBase::location(const TSourceLoc &loc)
-{
-    location(loc.first_file, loc.first_line);
-}
-
-void TInfoSinkBase::message(TPrefixType p, const TSourceLoc &loc, const char *m)
-{
-    prefix(p);
-    location(loc);
-    sink.append(m);
-    sink.append("\n");
 }
 
 }  // namespace sh

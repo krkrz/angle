@@ -1,378 +1,176 @@
 //
-// Copyright (c) 2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-
-// validationES2.h: Validation functions for OpenGL ES 2.0 entry point parameters
+// validationES2.h:
+//  Inlined validation functions for OpenGL ES 2.0 entry points.
 
 #ifndef LIBANGLE_VALIDATION_ES2_H_
 #define LIBANGLE_VALIDATION_ES2_H_
 
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
+#include "libANGLE/ErrorStrings.h"
+#include "libANGLE/validationES.h"
+#include "libANGLE/validationES2_autogen.h"
 
 namespace gl
 {
-class Context;
-class ValidationContext;
-class Texture;
+ANGLE_INLINE bool ValidateDrawArrays(Context *context,
+                                     PrimitiveMode mode,
+                                     GLint first,
+                                     GLsizei count)
+{
+    return ValidateDrawArraysCommon(context, mode, first, count, 1);
+}
 
-bool ValidateES2TexImageParameters(Context *context,
-                                   GLenum target,
-                                   GLint level,
-                                   GLenum internalformat,
-                                   bool isCompressed,
-                                   bool isSubImage,
-                                   GLint xoffset,
-                                   GLint yoffset,
-                                   GLsizei width,
-                                   GLsizei height,
-                                   GLint border,
-                                   GLenum format,
-                                   GLenum type,
-                                   GLsizei imageSize,
-                                   const GLvoid *pixels);
+ANGLE_INLINE bool ValidateUniform2f(Context *context, GLint location, GLfloat x, GLfloat y)
+{
+    return ValidateUniform(context, GL_FLOAT_VEC2, location, 1);
+}
 
-bool ValidateES2CopyTexImageParameters(ValidationContext *context,
-                                       GLenum target,
+ANGLE_INLINE bool ValidateBindBuffer(Context *context, BufferBinding target, BufferID buffer)
+{
+    if (!context->isValidBufferBinding(target))
+    {
+        context->validationError(GL_INVALID_ENUM, err::kInvalidBufferTypes);
+        return false;
+    }
+
+    if (!context->getState().isBindGeneratesResourceEnabled() &&
+        !context->isBufferGenerated(buffer))
+    {
+        context->validationError(GL_INVALID_OPERATION, err::kObjectNotGenerated);
+        return false;
+    }
+
+    return true;
+}
+
+ANGLE_INLINE bool ValidateDrawElements(Context *context,
+                                       PrimitiveMode mode,
+                                       GLsizei count,
+                                       DrawElementsType type,
+                                       const void *indices)
+{
+    return ValidateDrawElementsCommon(context, mode, count, type, indices, 1);
+}
+
+ANGLE_INLINE bool ValidateVertexAttribPointer(Context *context,
+                                              GLuint index,
+                                              GLint size,
+                                              VertexAttribType type,
+                                              GLboolean normalized,
+                                              GLsizei stride,
+                                              const void *ptr)
+{
+    if (!ValidateFloatVertexFormat(context, index, size, type))
+    {
+        return false;
+    }
+
+    if (stride < 0)
+    {
+        context->validationError(GL_INVALID_VALUE, err::kNegativeStride);
+        return false;
+    }
+
+    if (context->getClientVersion() >= ES_3_1)
+    {
+        const Caps &caps = context->getCaps();
+        if (stride > caps.maxVertexAttribStride)
+        {
+            context->validationError(GL_INVALID_VALUE, err::kExceedsMaxVertexAttribStride);
+            return false;
+        }
+
+        if (index >= static_cast<GLuint>(caps.maxVertexAttribBindings))
+        {
+            context->validationError(GL_INVALID_VALUE, err::kExceedsMaxVertexAttribBindings);
+            return false;
+        }
+    }
+
+    // [OpenGL ES 3.0.2] Section 2.8 page 24:
+    // An INVALID_OPERATION error is generated when a non-zero vertex array object
+    // is bound, zero is bound to the ARRAY_BUFFER buffer object binding point,
+    // and the pointer argument is not NULL.
+    bool nullBufferAllowed = context->getState().areClientArraysEnabled() &&
+                             context->getState().getVertexArray()->id().value == 0;
+    if (!nullBufferAllowed && context->getState().getTargetBuffer(BufferBinding::Array) == 0 &&
+        ptr != nullptr)
+    {
+        context->validationError(GL_INVALID_OPERATION, err::kClientDataInVertexArray);
+        return false;
+    }
+
+    if (context->getExtensions().webglCompatibility)
+    {
+        // WebGL 1.0 [Section 6.14] Fixed point support
+        // The WebGL API does not support the GL_FIXED data type.
+        if (type == VertexAttribType::Fixed)
+        {
+            context->validationError(GL_INVALID_ENUM, err::kFixedNotInWebGL);
+            return false;
+        }
+
+        if (!ValidateWebGLVertexAttribPointer(context, type, normalized, stride, ptr, false))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void RecordBindTextureTypeError(Context *context, TextureType target);
+
+ANGLE_INLINE bool ValidateBindTexture(Context *context, TextureType target, TextureID texture)
+{
+    if (!context->getStateCache().isValidBindTextureType(target))
+    {
+        RecordBindTextureTypeError(context, target);
+        return false;
+    }
+
+    if (texture.value == 0)
+    {
+        return true;
+    }
+
+    Texture *textureObject = context->getTexture(texture);
+    if (textureObject && textureObject->getType() != target)
+    {
+        context->validationError(GL_INVALID_OPERATION, err::kTextureTargetMismatch);
+        return false;
+    }
+
+    if (!context->getState().isBindGeneratesResourceEnabled() &&
+        !context->isTextureGenerated(texture))
+    {
+        context->validationError(GL_INVALID_OPERATION, err::kObjectNotGenerated);
+        return false;
+    }
+
+    return true;
+}
+
+// Validation of all Tex[Sub]Image2D parameters except TextureTarget.
+bool ValidateES2TexImageParametersBase(Context *context,
+                                       TextureTarget target,
                                        GLint level,
                                        GLenum internalformat,
+                                       bool isCompressed,
                                        bool isSubImage,
                                        GLint xoffset,
                                        GLint yoffset,
-                                       GLint x,
-                                       GLint y,
                                        GLsizei width,
                                        GLsizei height,
-                                       GLint border);
-
-bool ValidateES2TexStorageParameters(Context *context, GLenum target, GLsizei levels, GLenum internalformat,
-                                                   GLsizei width, GLsizei height);
-
-bool ValidateDiscardFramebufferEXT(Context *context, GLenum target, GLsizei numAttachments,
-                                   const GLenum *attachments);
-
-bool ValidateDrawBuffersEXT(ValidationContext *context, GLsizei n, const GLenum *bufs);
-
-bool ValidateBindVertexArrayOES(Context *context, GLuint array);
-bool ValidateDeleteVertexArraysOES(Context *context, GLsizei n);
-bool ValidateGenVertexArraysOES(Context *context, GLsizei n);
-bool ValidateIsVertexArrayOES(Context *context);
-
-bool ValidateProgramBinaryOES(Context *context,
-                              GLuint program,
-                              GLenum binaryFormat,
-                              const void *binary,
-                              GLint length);
-bool ValidateGetProgramBinaryOES(Context *context,
-                                 GLuint program,
-                                 GLsizei bufSize,
-                                 GLsizei *length,
-                                 GLenum *binaryFormat,
-                                 void *binary);
-
-// GL_KHR_debug
-bool ValidateDebugMessageControlKHR(Context *context,
-                                    GLenum source,
-                                    GLenum type,
-                                    GLenum severity,
-                                    GLsizei count,
-                                    const GLuint *ids,
-                                    GLboolean enabled);
-bool ValidateDebugMessageInsertKHR(Context *context,
-                                   GLenum source,
-                                   GLenum type,
-                                   GLuint id,
-                                   GLenum severity,
-                                   GLsizei length,
-                                   const GLchar *buf);
-bool ValidateDebugMessageCallbackKHR(Context *context,
-                                     GLDEBUGPROCKHR callback,
-                                     const void *userParam);
-bool ValidateGetDebugMessageLogKHR(Context *context,
-                                   GLuint count,
-                                   GLsizei bufSize,
-                                   GLenum *sources,
-                                   GLenum *types,
-                                   GLuint *ids,
-                                   GLenum *severities,
-                                   GLsizei *lengths,
-                                   GLchar *messageLog);
-bool ValidatePushDebugGroupKHR(Context *context,
-                               GLenum source,
-                               GLuint id,
-                               GLsizei length,
-                               const GLchar *message);
-bool ValidatePopDebugGroupKHR(Context *context);
-bool ValidateObjectLabelKHR(Context *context,
-                            GLenum identifier,
-                            GLuint name,
-                            GLsizei length,
-                            const GLchar *label);
-bool ValidateGetObjectLabelKHR(Context *context,
-                               GLenum identifier,
-                               GLuint name,
-                               GLsizei bufSize,
-                               GLsizei *length,
-                               GLchar *label);
-bool ValidateObjectPtrLabelKHR(Context *context,
-                               const void *ptr,
-                               GLsizei length,
-                               const GLchar *label);
-bool ValidateGetObjectPtrLabelKHR(Context *context,
-                                  const void *ptr,
-                                  GLsizei bufSize,
-                                  GLsizei *length,
-                                  GLchar *label);
-bool ValidateGetPointervKHR(Context *context, GLenum pname, void **params);
-bool ValidateBlitFramebufferANGLE(Context *context,
-                                  GLint srcX0,
-                                  GLint srcY0,
-                                  GLint srcX1,
-                                  GLint srcY1,
-                                  GLint dstX0,
-                                  GLint dstY0,
-                                  GLint dstX1,
-                                  GLint dstY1,
-                                  GLbitfield mask,
-                                  GLenum filter);
-
-bool ValidateClear(ValidationContext *context, GLbitfield mask);
-bool ValidateTexImage2D(Context *context,
-                        GLenum target,
-                        GLint level,
-                        GLint internalformat,
-                        GLsizei width,
-                        GLsizei height,
-                        GLint border,
-                        GLenum format,
-                        GLenum type,
-                        const GLvoid *pixels);
-bool ValidateTexImage2DRobust(Context *context,
-                              GLenum target,
-                              GLint level,
-                              GLint internalformat,
-                              GLsizei width,
-                              GLsizei height,
-                              GLint border,
-                              GLenum format,
-                              GLenum type,
-                              GLsizei bufSize,
-                              const GLvoid *pixels);
-bool ValidateTexSubImage2D(Context *context,
-                           GLenum target,
-                           GLint level,
-                           GLint xoffset,
-                           GLint yoffset,
-                           GLsizei width,
-                           GLsizei height,
-                           GLenum format,
-                           GLenum type,
-                           const GLvoid *pixels);
-bool ValidateTexSubImage2DRobustANGLE(Context *context,
-                                      GLenum target,
-                                      GLint level,
-                                      GLint xoffset,
-                                      GLint yoffset,
-                                      GLsizei width,
-                                      GLsizei height,
-                                      GLenum format,
-                                      GLenum type,
-                                      GLsizei bufSize,
-                                      const GLvoid *pixels);
-bool ValidateCompressedTexImage2D(Context *context,
-                                  GLenum target,
-                                  GLint level,
-                                  GLenum internalformat,
-                                  GLsizei width,
-                                  GLsizei height,
-                                  GLint border,
-                                  GLsizei imageSize,
-                                  const GLvoid *data);
-bool ValidateCompressedTexSubImage2D(Context *context,
-                                     GLenum target,
-                                     GLint level,
-                                     GLint xoffset,
-                                     GLint yoffset,
-                                     GLsizei width,
-                                     GLsizei height,
-                                     GLenum format,
-                                     GLsizei imageSize,
-                                     const GLvoid *data);
-bool ValidateBindTexture(Context *context, GLenum target, GLuint texture);
-
-bool ValidateGetBufferPointervOES(Context *context, GLenum target, GLenum pname, void **params);
-bool ValidateMapBufferOES(Context *context, GLenum target, GLenum access);
-bool ValidateUnmapBufferOES(Context *context, GLenum target);
-bool ValidateMapBufferRangeEXT(Context *context,
-                               GLenum target,
-                               GLintptr offset,
-                               GLsizeiptr length,
-                               GLbitfield access);
-bool ValidateFlushMappedBufferRangeEXT(Context *context,
-                                       GLenum target,
-                                       GLintptr offset,
-                                       GLsizeiptr length);
-
-bool ValidateBindUniformLocationCHROMIUM(Context *context,
-                                         GLuint program,
-                                         GLint location,
-                                         const GLchar *name);
-
-bool ValidateCoverageModulationCHROMIUM(Context *context, GLenum components);
-
-// CHROMIUM_path_rendering
-bool ValidateMatrix(Context *context, GLenum matrixMode, const GLfloat *matrix);
-bool ValidateMatrixMode(Context *context, GLenum matrixMode);
-bool ValidateGenPaths(Context *context, GLsizei range);
-bool ValidateDeletePaths(Context *context, GLuint first, GLsizei range);
-bool ValidatePathCommands(Context *context,
-                          GLuint path,
-                          GLsizei numCommands,
-                          const GLubyte *commands,
-                          GLsizei numCoords,
-                          GLenum coordType,
-                          const void *coords);
-bool ValidateSetPathParameter(Context *context, GLuint path, GLenum pname, GLfloat value);
-bool ValidateGetPathParameter(Context *context, GLuint path, GLenum pname, GLfloat *value);
-bool ValidatePathStencilFunc(Context *context, GLenum func, GLint ref, GLuint mask);
-bool ValidateStencilFillPath(Context *context, GLuint path, GLenum fillMode, GLuint mask);
-bool ValidateStencilStrokePath(Context *context, GLuint path, GLint reference, GLuint mask);
-bool ValidateCoverPath(Context *context, GLuint path, GLenum coverMode);
-bool ValidateStencilThenCoverFillPath(Context *context,
-                                      GLuint path,
-                                      GLenum fillMode,
-                                      GLuint mask,
-                                      GLenum coverMode);
-bool ValidateStencilThenCoverStrokePath(Context *context,
-                                        GLuint path,
-                                        GLint reference,
-                                        GLuint mask,
-                                        GLenum coverMode);
-bool ValidateIsPath(Context *context);
-bool ValidateCoverFillPathInstanced(Context *context,
-                                    GLsizei numPaths,
-                                    GLenum pathNameType,
-                                    const void *paths,
-                                    GLuint pathBase,
-                                    GLenum coverMode,
-                                    GLenum transformType,
-                                    const GLfloat *transformValues);
-bool ValidateCoverStrokePathInstanced(Context *context,
-                                      GLsizei numPaths,
-                                      GLenum pathNameType,
-                                      const void *paths,
-                                      GLuint pathBase,
-                                      GLenum coverMode,
-                                      GLenum transformType,
-                                      const GLfloat *transformValues);
-bool ValidateStencilFillPathInstanced(Context *context,
-                                      GLsizei numPaths,
-                                      GLenum pathNameType,
-                                      const void *paths,
-                                      GLuint pathBAse,
-                                      GLenum fillMode,
-                                      GLuint mask,
-                                      GLenum transformType,
-                                      const GLfloat *transformValues);
-bool ValidateStencilStrokePathInstanced(Context *context,
-                                        GLsizei numPaths,
-                                        GLenum pathNameType,
-                                        const void *paths,
-                                        GLuint pathBase,
-                                        GLint reference,
-                                        GLuint mask,
-                                        GLenum transformType,
-                                        const GLfloat *transformValues);
-bool ValidateStencilThenCoverFillPathInstanced(Context *context,
-                                               GLsizei numPaths,
-                                               GLenum pathNameType,
-                                               const void *paths,
-                                               GLuint pathBase,
-                                               GLenum fillMode,
-                                               GLuint mask,
-                                               GLenum coverMode,
-                                               GLenum transformType,
-                                               const GLfloat *transformValues);
-bool ValidateStencilThenCoverStrokePathInstanced(Context *context,
-                                                 GLsizei numPaths,
-                                                 GLenum pathNameType,
-                                                 const void *paths,
-                                                 GLuint pathBase,
-                                                 GLint reference,
-                                                 GLuint mask,
-                                                 GLenum coverMode,
-                                                 GLenum transformType,
-                                                 const GLfloat *transformValues);
-bool ValidateBindFragmentInputLocation(Context *context,
-                                       GLuint program,
-                                       GLint location,
-                                       const GLchar *name);
-bool ValidateProgramPathFragmentInputGen(Context *context,
-                                         GLuint program,
-                                         GLint location,
-                                         GLenum genMode,
-                                         GLint components,
-                                         const GLfloat *coeffs);
-
-bool ValidateCopyTextureCHROMIUM(Context *context,
-                                 GLuint sourceId,
-                                 GLuint destId,
-                                 GLint internalFormat,
-                                 GLenum destType,
-                                 GLboolean unpackFlipY,
-                                 GLboolean unpackPremultiplyAlpha,
-                                 GLboolean unpackUnmultiplyAlpha);
-bool ValidateCopySubTextureCHROMIUM(Context *context,
-                                    GLuint sourceId,
-                                    GLuint destId,
-                                    GLint xoffset,
-                                    GLint yoffset,
-                                    GLint x,
-                                    GLint y,
-                                    GLsizei width,
-                                    GLsizei height,
-                                    GLboolean unpackFlipY,
-                                    GLboolean unpackPremultiplyAlpha,
-                                    GLboolean unpackUnmultiplyAlpha);
-bool ValidateCompressedCopyTextureCHROMIUM(Context *context, GLuint sourceId, GLuint destId);
-
-bool ValidateCreateShader(Context *context, GLenum type);
-bool ValidateBufferData(ValidationContext *context,
-                        GLenum target,
-                        GLsizeiptr size,
-                        const GLvoid *data,
-                        GLenum usage);
-bool ValidateBufferSubData(ValidationContext *context,
-                           GLenum target,
-                           GLintptr offset,
-                           GLsizeiptr size,
-                           const GLvoid *data);
-
-bool ValidateRequestExtensionANGLE(ValidationContext *context, const GLchar *name);
-
-bool ValidateActiveTexture(ValidationContext *context, GLenum texture);
-bool ValidateAttachShader(ValidationContext *context, GLuint program, GLuint shader);
-bool ValidateBindAttribLocation(ValidationContext *context,
-                                GLuint program,
-                                GLuint index,
-                                const GLchar *name);
-bool ValidateBindBuffer(ValidationContext *context, GLenum target, GLuint buffer);
-bool ValidateBindFramebuffer(ValidationContext *context, GLenum target, GLuint framebuffer);
-bool ValidateBindRenderbuffer(ValidationContext *context, GLenum target, GLuint renderbuffer);
-bool ValidateBlendEquation(ValidationContext *context, GLenum mode);
-bool ValidateBlendEquationSeparate(ValidationContext *context, GLenum modeRGB, GLenum modeAlpha);
-bool ValidateBlendFunc(ValidationContext *context, GLenum sfactor, GLenum dfactor);
-bool ValidateBlendFuncSeparate(ValidationContext *context,
-                               GLenum srcRGB,
-                               GLenum dstRGB,
-                               GLenum srcAlpha,
-                               GLenum dstAlpha);
-
-bool ValidateGetString(Context *context, GLenum name);
-bool ValidateLineWidth(ValidationContext *context, GLfloat width);
+                                       GLint border,
+                                       GLenum format,
+                                       GLenum type,
+                                       GLsizei imageSize,
+                                       const void *pixels);
 
 }  // namespace gl
 
-#endif // LIBANGLE_VALIDATION_ES2_H_
+#endif  // LIBANGLE_VALIDATION_ES2_H_

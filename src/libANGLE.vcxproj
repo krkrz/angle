@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -19,754 +22,1012 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D51F95B2-D343-6B88-7902-C392ACC99260}</ProjectGuid>
+    <ProjectGuid>{AA488933-538E-3B66-8C3C-0A19A6DFB96F}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>libANGLE</RootNamespace>
-    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
-    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <Platform>x64</Platform>
+    <ProjectName>libANGLE</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props"/>
-  <PropertyGroup Label="Configuration">
-    <CharacterSet>MultiByte</CharacterSet>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Label="Locals">
-    <PlatformToolset>v140</PlatformToolset>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props"/>
-  <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props"/>
-  <ImportGroup Label="ExtensionSettings"/>
-  <ImportGroup Label="PropertySheets">
-    <Import Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props"/>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <PropertyGroup Label="UserMacros"/>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <ExecutablePath>$(ExecutablePath);$(MSBuildProjectDirectory)\..\third_party\cygwin\bin\;$(MSBuildProjectDirectory)\..\third_party\python_26\</ExecutablePath>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)_$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)obj\$(ProjectName)\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectName)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)_$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)obj\$(ProjectName)\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectName)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)_$(Platform)\</OutDir>
     <IntDir>$(OutDir)obj\$(ProjectName)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
-    <TargetName>$(ProjectName)</TargetName>
-    <TargetPath>$(OutDir)lib\$(ProjectName)$(TargetExt)</TargetPath>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <AdditionalIncludeDirectories>.;..\include;third_party\khronos;$(OutDir)obj\global_intermediate\angle;..\src;..\src\common\third_party\numerics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/MP /d2guard4 /Wv:18 %(AdditionalOptions)</AdditionalOptions>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <CompileAsWinRT>false</CompileAsWinRT>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4100;4127;4718;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <ExceptionHandling>false</ExceptionHandling>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <MinimalRebuild>false</MinimalRebuild>
-      <Optimization>Disabled</Optimization>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;_HAS_EXCEPTIONS=0;NOMINMAX;LIBANGLE_IMPLEMENTATION;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_D3D9;ANGLE_ENABLE_D3D11;ANGLE_ENABLE_OPENGL;ANGLE_ENABLE_VULKAN;ANGLE_ENABLE_NULL;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;_DEBUG;ANGLE_ENABLE_DEBUG_ANNOTATIONS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
-      <WarningLevel>Level4</WarningLevel>
-    </ClCompile>
-    <Lib>
-      <AdditionalLibraryDirectories>C:/Program Files (x86)/Windows Kits/10/Lib/winv6.3/um/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <OutputFile>$(OutDir)lib\$(ProjectName)$(TargetExt)</OutputFile>
-      <TargetMachine>MachineX86</TargetMachine>
-    </Lib>
-    <Link>
-      <AdditionalDependencies>kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;odbc32.lib;odbccp32.lib;delayimp.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:/Program Files (x86)/Windows Kits/10/Lib/winv6.3/um/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/guard:cf %(AdditionalOptions)</AdditionalOptions>
-      <FixedBaseAddress>false</FixedBaseAddress>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImportLibrary>$(OutDir)lib\$(TargetName).lib</ImportLibrary>
-      <MapFileName>$(OutDir)$(TargetName).map</MapFileName>
-      <SubSystem>Console</SubSystem>
-      <TargetMachine>MachineX86</TargetMachine>
-      <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
-    </Link>
-    <ResourceCompile>
-      <AdditionalIncludeDirectories>.;..\include;third_party\khronos;$(OutDir)obj\global_intermediate\angle;..\src;..\src\common\third_party\numerics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Culture>0x0409</Culture>
-      <PreprocessorDefinitions>LIBANGLE_IMPLEMENTATION;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_D3D9;ANGLE_ENABLE_D3D11;ANGLE_ENABLE_OPENGL;ANGLE_ENABLE_VULKAN;ANGLE_ENABLE_NULL;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;_DEBUG;ANGLE_ENABLE_DEBUG_ANNOTATIONS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ResourceCompile>
-  </ItemDefinitionGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)_$(Platform)\</OutDir>
+    <IntDir>$(OutDir)obj\$(ProjectName)\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;..\include;third_party\khronos;$(OutDir)obj\global_intermediate\angle;..\src;..\src\common\third_party\numerics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/MP /d2guard4 /Wv:18 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(OutDir)obj\global_intermediate\angle;..\include;.;third_party\khronos;common\third_party\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /d2guard4 /bigobj</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <CompileAsWinRT>false</CompileAsWinRT>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ConformanceMode>false</ConformanceMode>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4100;4127;4718;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <ExceptionHandling>false</ExceptionHandling>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;_HAS_EXCEPTIONS=0;NOMINMAX;LIBANGLE_IMPLEMENTATION;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_D3D9;ANGLE_ENABLE_D3D11;ANGLE_ENABLE_OPENGL;ANGLE_ENABLE_VULKAN;ANGLE_ENABLE_NULL;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;_DEBUG;ANGLE_ENABLE_DEBUG_ANNOTATIONS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
-      <WarningLevel>Level4</WarningLevel>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <WarningVersion>18</WarningVersion>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;ANGLE_ENABLE_NULL;LIBANGLE_IMPLEMENTATION;ANGLE_EXPORT=;ANGLE_UTIL_EXPORT=;EGLAPI=;GL_APICALL=;GL_API=;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;GL_SILENCE_DEPRECATION;_HAS_EXCEPTIONS=0;NOMINMAX;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_DEBUG_ANNOTATIONS;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;ANGLE_ENABLE_D3D11;ANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES={ "d3dcompiler_47.dll", "d3dcompiler_46.dll", "d3dcompiler_43.dll" };ANGLE_ENABLE_D3D9;ANGLE_ENABLE_OPENGL;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
-    <Lib>
-      <AdditionalLibraryDirectories>C:/Program Files (x86)/Windows Kits/10/Lib/winv6.3/um/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <OutputFile>$(OutDir)lib\$(ProjectName)$(TargetExt)</OutputFile>
-      <TargetMachine>MachineX64</TargetMachine>
-    </Lib>
-    <Link>
-      <AdditionalDependencies>kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;odbc32.lib;odbccp32.lib;delayimp.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:/Program Files (x86)/Windows Kits/10/Lib/winv6.3/um/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/guard:cf %(AdditionalOptions)</AdditionalOptions>
-      <FixedBaseAddress>false</FixedBaseAddress>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImportLibrary>$(OutDir)lib\$(TargetName).lib</ImportLibrary>
-      <MapFileName>$(OutDir)$(TargetName).map</MapFileName>
-      <SubSystem>Console</SubSystem>
-      <TargetMachine>MachineX64</TargetMachine>
-      <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
-    </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>.;..\include;third_party\khronos;$(OutDir)obj\global_intermediate\angle;..\src;..\src\common\third_party\numerics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Culture>0x0409</Culture>
-      <PreprocessorDefinitions>LIBANGLE_IMPLEMENTATION;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_D3D9;ANGLE_ENABLE_D3D11;ANGLE_ENABLE_OPENGL;ANGLE_ENABLE_VULKAN;ANGLE_ENABLE_NULL;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;_DEBUG;ANGLE_ENABLE_DEBUG_ANNOTATIONS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;ANGLE_ENABLE_NULL;LIBANGLE_IMPLEMENTATION;ANGLE_EXPORT=;ANGLE_UTIL_EXPORT=;EGLAPI=;GL_APICALL=;GL_API=;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;GL_SILENCE_DEPRECATION;_HAS_EXCEPTIONS=0;NOMINMAX;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_DEBUG_ANNOTATIONS;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;ANGLE_ENABLE_D3D11;ANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES={ \"d3dcompiler_47.dll\", \"d3dcompiler_46.dll\", \"d3dcompiler_43.dll\" };ANGLE_ENABLE_D3D9;ANGLE_ENABLE_OPENGL;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include;.;third_party\khronos;common\third_party\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>..\include;.;third_party\khronos;common\third_party\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;..\include;third_party\khronos;$(OutDir)obj\global_intermediate\angle;..\src;..\src\common\third_party\numerics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/MP /d2guard4 /Wv:18 %(AdditionalOptions)</AdditionalOptions>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(OutDir)obj\global_intermediate\angle;..\include;.;third_party\khronos;common\third_party\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /d2guard4 /bigobj</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ConformanceMode>false</ConformanceMode>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4100;4127;4718;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <ExceptionHandling>false</ExceptionHandling>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <MinimalRebuild>false</MinimalRebuild>
-      <Optimization>MaxSpeed</Optimization>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;_HAS_EXCEPTIONS=0;NOMINMAX;LIBANGLE_IMPLEMENTATION;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_D3D9;ANGLE_ENABLE_D3D11;ANGLE_ENABLE_OPENGL;ANGLE_ENABLE_VULKAN;ANGLE_ENABLE_NULL;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
-      <WarningLevel>Level4</WarningLevel>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <WarningVersion>18</WarningVersion>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;ANGLE_ENABLE_NULL;LIBANGLE_IMPLEMENTATION;ANGLE_EXPORT=;ANGLE_UTIL_EXPORT=;EGLAPI=;GL_APICALL=;GL_API=;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;GL_SILENCE_DEPRECATION;_HAS_EXCEPTIONS=0;NOMINMAX;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_DEBUG_ANNOTATIONS;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;ANGLE_ENABLE_D3D11;ANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES={ "d3dcompiler_47.dll", "d3dcompiler_46.dll", "d3dcompiler_43.dll" };ANGLE_ENABLE_D3D9;ANGLE_ENABLE_OPENGL;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DisableSpecificWarnings>4100;4127;4718;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
-    <Lib>
-      <AdditionalLibraryDirectories>C:/Program Files (x86)/Windows Kits/10/Lib/winv6.3/um/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <OutputFile>$(OutDir)lib\$(ProjectName)$(TargetExt)</OutputFile>
-      <TargetMachine>MachineX86</TargetMachine>
-    </Lib>
-    <Link>
-      <AdditionalDependencies>kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;odbc32.lib;odbccp32.lib;delayimp.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:/Program Files (x86)/Windows Kits/10/Lib/winv6.3/um/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/guard:cf %(AdditionalOptions)</AdditionalOptions>
-      <FixedBaseAddress>false</FixedBaseAddress>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImportLibrary>$(OutDir)lib\$(TargetName).lib</ImportLibrary>
-      <MapFileName>$(OutDir)$(TargetName).map</MapFileName>
-      <SubSystem>Console</SubSystem>
-      <TargetMachine>MachineX86</TargetMachine>
-      <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
-    </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>.;..\include;third_party\khronos;$(OutDir)obj\global_intermediate\angle;..\src;..\src\common\third_party\numerics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Culture>0x0409</Culture>
-      <PreprocessorDefinitions>LIBANGLE_IMPLEMENTATION;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_D3D9;ANGLE_ENABLE_D3D11;ANGLE_ENABLE_OPENGL;ANGLE_ENABLE_VULKAN;ANGLE_ENABLE_NULL;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;ANGLE_ENABLE_NULL;LIBANGLE_IMPLEMENTATION;ANGLE_EXPORT=;ANGLE_UTIL_EXPORT=;EGLAPI=;GL_APICALL=;GL_API=;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;GL_SILENCE_DEPRECATION;_HAS_EXCEPTIONS=0;NOMINMAX;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_DEBUG_ANNOTATIONS;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;ANGLE_ENABLE_D3D11;ANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES={ \"d3dcompiler_47.dll\", \"d3dcompiler_46.dll\", \"d3dcompiler_43.dll\" };ANGLE_ENABLE_D3D9;ANGLE_ENABLE_OPENGL;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include;.;third_party\khronos;common\third_party\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>..\include;.;third_party\khronos;common\third_party\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x86</AdditionalOptions>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;..\include;third_party\khronos;$(OutDir)obj\global_intermediate\angle;..\src;..\src\common\third_party\numerics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/MP /d2guard4 /Wv:18 %(AdditionalOptions)</AdditionalOptions>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <CompileAsWinRT>false</CompileAsWinRT>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4100;4127;4718;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <ExceptionHandling>false</ExceptionHandling>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <MinimalRebuild>false</MinimalRebuild>
+      <AdditionalIncludeDirectories>$(OutDir)obj\global_intermediate\angle;..\include;.;third_party\khronos;common\third_party\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /d2guard4 /bigobj</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ConformanceMode>false</ConformanceMode>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;_HAS_EXCEPTIONS=0;NOMINMAX;LIBANGLE_IMPLEMENTATION;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_D3D9;ANGLE_ENABLE_D3D11;ANGLE_ENABLE_OPENGL;ANGLE_ENABLE_VULKAN;ANGLE_ENABLE_NULL;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
-      <WarningLevel>Level4</WarningLevel>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <WarningVersion>18</WarningVersion>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;ANGLE_ENABLE_NULL;LIBANGLE_IMPLEMENTATION;ANGLE_EXPORT=;ANGLE_UTIL_EXPORT=;EGLAPI=;GL_APICALL=;GL_API=;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;GL_SILENCE_DEPRECATION;_HAS_EXCEPTIONS=0;NOMINMAX;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_DEBUG_ANNOTATIONS;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;ANGLE_ENABLE_D3D11;ANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES={ "d3dcompiler_47.dll", "d3dcompiler_46.dll", "d3dcompiler_43.dll" };ANGLE_ENABLE_D3D9;ANGLE_ENABLE_OPENGL;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
     </ClCompile>
-    <Lib>
-      <AdditionalLibraryDirectories>C:/Program Files (x86)/Windows Kits/10/Lib/winv6.3/um/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <OutputFile>$(OutDir)lib\$(ProjectName)$(TargetExt)</OutputFile>
-      <TargetMachine>MachineX64</TargetMachine>
-    </Lib>
-    <Link>
-      <AdditionalDependencies>kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;odbc32.lib;odbccp32.lib;delayimp.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:/Program Files (x86)/Windows Kits/10/Lib/winv6.3/um/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/guard:cf %(AdditionalOptions)</AdditionalOptions>
-      <FixedBaseAddress>false</FixedBaseAddress>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImportLibrary>$(OutDir)lib\$(TargetName).lib</ImportLibrary>
-      <MapFileName>$(OutDir)$(TargetName).map</MapFileName>
-      <SubSystem>Console</SubSystem>
-      <TargetMachine>MachineX64</TargetMachine>
-      <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
-    </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>.;..\include;third_party\khronos;$(OutDir)obj\global_intermediate\angle;..\src;..\src\common\third_party\numerics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Culture>0x0409</Culture>
-      <PreprocessorDefinitions>LIBANGLE_IMPLEMENTATION;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_D3D9;ANGLE_ENABLE_D3D11;ANGLE_ENABLE_OPENGL;ANGLE_ENABLE_VULKAN;ANGLE_ENABLE_NULL;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;ANGLE_ENABLE_NULL;LIBANGLE_IMPLEMENTATION;ANGLE_EXPORT=;ANGLE_UTIL_EXPORT=;EGLAPI=;GL_APICALL=;GL_API=;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;GL_SILENCE_DEPRECATION;_HAS_EXCEPTIONS=0;NOMINMAX;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_DEBUG_ANNOTATIONS;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;ANGLE_ENABLE_D3D11;ANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES={ \"d3dcompiler_47.dll\", \"d3dcompiler_46.dll\", \"d3dcompiler_43.dll\" };ANGLE_ENABLE_D3D9;ANGLE_ENABLE_OPENGL;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include;.;third_party\khronos;common\third_party\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>..\include;.;third_party\khronos;common\third_party\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(OutDir)obj\global_intermediate\angle;..\include;.;third_party\khronos;common\third_party\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /d2guard4 /bigobj</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ConformanceMode>false</ConformanceMode>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <WarningVersion>18</WarningVersion>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;ANGLE_ENABLE_NULL;LIBANGLE_IMPLEMENTATION;ANGLE_EXPORT=;ANGLE_UTIL_EXPORT=;EGLAPI=;GL_APICALL=;GL_API=;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;GL_SILENCE_DEPRECATION;_HAS_EXCEPTIONS=0;NOMINMAX;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_DEBUG_ANNOTATIONS;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;ANGLE_ENABLE_D3D11;ANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES={ "d3dcompiler_47.dll", "d3dcompiler_46.dll", "d3dcompiler_43.dll" };ANGLE_ENABLE_D3D9;ANGLE_ENABLE_OPENGL;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;ANGLE_ENABLE_NULL;LIBANGLE_IMPLEMENTATION;ANGLE_EXPORT=;ANGLE_UTIL_EXPORT=;EGLAPI=;GL_APICALL=;GL_API=;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;GL_SILENCE_DEPRECATION;_HAS_EXCEPTIONS=0;NOMINMAX;ANGLE_STANDALONE_BUILD;ANGLE_ENABLE_DEBUG_ANNOTATIONS;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;ANGLE_ENABLE_HLSL;ANGLE_ENABLE_D3D11;ANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES={ \"d3dcompiler_47.dll\", \"d3dcompiler_46.dll\", \"d3dcompiler_43.dll\" };ANGLE_ENABLE_D3D9;ANGLE_ENABLE_OPENGL;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include;.;third_party\khronos;common\third_party\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>..\include;.;third_party\khronos;common\third_party\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x86</AdditionalOptions>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="libANGLE\Error.inl"/>
-    <None Include="libANGLE\Version.inl"/>
-    <None Include="libANGLE\VertexAttribute.inl"/>
-    <None Include="libANGLE\angletypes.inl"/>
-    <None Include="libANGLE\renderer\Format_ID_autogen.inl"/>
-    <None Include="libANGLE\renderer\d3d\d3d11\copyvertex.inl"/>
-    <None Include="angle.gyp"/>
+    <ClCompile Include="common\event_tracer.cpp" />
+    <ClCompile Include="libANGLE\AttributeMap.cpp" />
+    <ClInclude Include="libANGLE\AttributeMap.h" />
+    <ClInclude Include="libANGLE\BinaryStream.h" />
+    <ClCompile Include="libANGLE\BlobCache.cpp" />
+    <ClInclude Include="libANGLE\BlobCache.h" />
+    <ClCompile Include="libANGLE\Buffer.cpp" />
+    <ClInclude Include="libANGLE\Buffer.h" />
+    <ClCompile Include="libANGLE\Caps.cpp" />
+    <ClInclude Include="libANGLE\Caps.h" />
+    <ClCompile Include="libANGLE\Compiler.cpp" />
+    <ClInclude Include="libANGLE\Compiler.h" />
+    <ClCompile Include="libANGLE\Config.cpp" />
+    <ClInclude Include="libANGLE\Config.h" />
+    <ClInclude Include="libANGLE\Constants.h" />
+    <ClCompile Include="libANGLE\Context.cpp" />
+    <ClInclude Include="libANGLE\Context.h" />
+    <ClInclude Include="libANGLE\Context.inl.h" />
+    <ClCompile Include="libANGLE\Context_gl.cpp" />
+    <ClInclude Include="libANGLE\Context_gl_1_0_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_1_1_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_1_2_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_1_3_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_1_4_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_1_5_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_2_0_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_2_1_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_3_0_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_3_1_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_3_2_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_3_3_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_4_0_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_4_1_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_4_2_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_4_3_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_4_4_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_4_5_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gl_4_6_autogen.h" />
+    <ClCompile Include="libANGLE\Context_gles_1_0.cpp" />
+    <ClInclude Include="libANGLE\Context_gles_1_0_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gles_2_0_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gles_3_0_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gles_3_1_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gles_3_2_autogen.h" />
+    <ClInclude Include="libANGLE\Context_gles_ext_autogen.h" />
+    <ClCompile Include="libANGLE\Debug.cpp" />
+    <ClInclude Include="libANGLE\Debug.h" />
+    <ClCompile Include="libANGLE\Device.cpp" />
+    <ClInclude Include="libANGLE\Device.h" />
+    <ClCompile Include="libANGLE\Display.cpp" />
+    <ClInclude Include="libANGLE\Display.h" />
+    <ClCompile Include="libANGLE\EGLSync.cpp" />
+    <ClInclude Include="libANGLE\EGLSync.h" />
+    <ClCompile Include="libANGLE\Error.cpp" />
+    <ClInclude Include="libANGLE\Error.h" />
+    <ClInclude Include="libANGLE\ErrorStrings.h" />
+    <ClCompile Include="libANGLE\Fence.cpp" />
+    <ClInclude Include="libANGLE\Fence.h" />
+    <ClInclude Include="libANGLE\FrameCapture.h" />
+    <ClCompile Include="libANGLE\FrameCapture_mock.cpp" />
+    <ClCompile Include="libANGLE\Framebuffer.cpp" />
+    <ClInclude Include="libANGLE\Framebuffer.h" />
+    <ClCompile Include="libANGLE\FramebufferAttachment.cpp" />
+    <ClInclude Include="libANGLE\FramebufferAttachment.h" />
+    <ClCompile Include="libANGLE\GLES1Renderer.cpp" />
+    <ClInclude Include="libANGLE\GLES1Renderer.h" />
+    <ClCompile Include="libANGLE\GLES1State.cpp" />
+    <ClInclude Include="libANGLE\GLES1State.h" />
+    <ClCompile Include="libANGLE\HandleAllocator.cpp" />
+    <ClInclude Include="libANGLE\HandleAllocator.h" />
+    <ClCompile Include="libANGLE\HandleRangeAllocator.cpp" />
+    <ClInclude Include="libANGLE\HandleRangeAllocator.h" />
+    <ClCompile Include="libANGLE\Image.cpp" />
+    <ClInclude Include="libANGLE\Image.h" />
+    <ClCompile Include="libANGLE\ImageIndex.cpp" />
+    <ClInclude Include="libANGLE\ImageIndex.h" />
+    <ClCompile Include="libANGLE\IndexRangeCache.cpp" />
+    <ClInclude Include="libANGLE\IndexRangeCache.h" />
+    <ClCompile Include="libANGLE\LoggingAnnotator.cpp" />
+    <ClInclude Include="libANGLE\LoggingAnnotator.h" />
+    <ClCompile Include="libANGLE\MemoryObject.cpp" />
+    <ClInclude Include="libANGLE\MemoryObject.h" />
+    <ClCompile Include="libANGLE\MemoryProgramCache.cpp" />
+    <ClInclude Include="libANGLE\MemoryProgramCache.h" />
+    <ClCompile Include="libANGLE\Observer.cpp" />
+    <ClInclude Include="libANGLE\Observer.h" />
+    <ClCompile Include="libANGLE\Overlay.cpp" />
+    <ClInclude Include="libANGLE\Overlay.h" />
+    <ClCompile Include="libANGLE\OverlayWidgets.cpp" />
+    <ClInclude Include="libANGLE\OverlayWidgets.h" />
+    <ClCompile Include="libANGLE\Overlay_autogen.cpp" />
+    <ClCompile Include="libANGLE\Overlay_font_autogen.cpp" />
+    <ClInclude Include="libANGLE\Overlay_font_autogen.h" />
+    <ClCompile Include="libANGLE\Path.cpp" />
+    <ClInclude Include="libANGLE\Path.h" />
+    <ClCompile Include="libANGLE\Platform.cpp" />
+    <ClCompile Include="libANGLE\Program.cpp" />
+    <ClInclude Include="libANGLE\Program.h" />
+    <ClCompile Include="libANGLE\ProgramLinkedResources.cpp" />
+    <ClInclude Include="libANGLE\ProgramLinkedResources.h" />
+    <ClCompile Include="libANGLE\ProgramPipeline.cpp" />
+    <ClInclude Include="libANGLE\ProgramPipeline.h" />
+    <ClCompile Include="libANGLE\Query.cpp" />
+    <ClInclude Include="libANGLE\Query.h" />
+    <ClInclude Include="libANGLE\RefCountObject.h" />
+    <ClCompile Include="libANGLE\Renderbuffer.cpp" />
+    <ClInclude Include="libANGLE\Renderbuffer.h" />
+    <ClCompile Include="libANGLE\ResourceManager.cpp" />
+    <ClInclude Include="libANGLE\ResourceManager.h" />
+    <ClInclude Include="libANGLE\ResourceMap.h" />
+    <ClCompile Include="libANGLE\Sampler.cpp" />
+    <ClInclude Include="libANGLE\Sampler.h" />
+    <ClCompile Include="libANGLE\Semaphore.cpp" />
+    <ClInclude Include="libANGLE\Semaphore.h" />
+    <ClCompile Include="libANGLE\Shader.cpp" />
+    <ClInclude Include="libANGLE\Shader.h" />
+    <ClInclude Include="libANGLE\SizedMRUCache.h" />
+    <ClCompile Include="libANGLE\State.cpp" />
+    <ClInclude Include="libANGLE\State.h" />
+    <ClCompile Include="libANGLE\Stream.cpp" />
+    <ClInclude Include="libANGLE\Stream.h" />
+    <ClCompile Include="libANGLE\Surface.cpp" />
+    <ClInclude Include="libANGLE\Surface.h" />
+    <ClCompile Include="libANGLE\Texture.cpp" />
+    <ClInclude Include="libANGLE\Texture.h" />
+    <ClCompile Include="libANGLE\Thread.cpp" />
+    <ClInclude Include="libANGLE\Thread.h" />
+    <ClCompile Include="libANGLE\TransformFeedback.cpp" />
+    <ClInclude Include="libANGLE\TransformFeedback.h" />
+    <ClCompile Include="libANGLE\Uniform.cpp" />
+    <ClInclude Include="libANGLE\Uniform.h" />
+    <ClCompile Include="libANGLE\VaryingPacking.cpp" />
+    <ClInclude Include="libANGLE\VaryingPacking.h" />
+    <ClInclude Include="libANGLE\Version.h" />
+    <ClCompile Include="libANGLE\VertexArray.cpp" />
+    <ClInclude Include="libANGLE\VertexArray.h" />
+    <ClCompile Include="libANGLE\VertexAttribute.cpp" />
+    <ClInclude Include="libANGLE\VertexAttribute.h" />
+    <ClCompile Include="libANGLE\WorkerThread.cpp" />
+    <ClInclude Include="libANGLE\WorkerThread.h" />
+    <ClCompile Include="libANGLE\angletypes.cpp" />
+    <ClInclude Include="libANGLE\angletypes.h" />
+    <ClCompile Include="libANGLE\entry_points_enum_autogen.cpp" />
+    <ClInclude Include="libANGLE\entry_points_enum_autogen.h" />
+    <ClInclude Include="libANGLE\entry_points_utils.h" />
+    <ClCompile Include="libANGLE\es3_copy_conversion_table_autogen.cpp" />
+    <ClInclude Include="libANGLE\features.h" />
+    <ClCompile Include="libANGLE\format_map_autogen.cpp" />
+    <ClCompile Include="libANGLE\format_map_desktop.cpp" />
+    <ClCompile Include="libANGLE\formatutils.cpp" />
+    <ClInclude Include="libANGLE\formatutils.h" />
+    <ClCompile Include="libANGLE\gl_enum_utils.cpp" />
+    <ClInclude Include="libANGLE\gl_enum_utils.h" />
+    <ClCompile Include="libANGLE\gl_enum_utils_autogen.cpp" />
+    <ClInclude Include="libANGLE\gl_enum_utils_autogen.h" />
+    <ClInclude Include="libANGLE\histogram_macros.h" />
+    <ClCompile Include="libANGLE\queryconversions.cpp" />
+    <ClInclude Include="libANGLE\queryconversions.h" />
+    <ClCompile Include="libANGLE\queryutils.cpp" />
+    <ClInclude Include="libANGLE\queryutils.h" />
+    <ClInclude Include="libANGLE\renderer\BufferImpl.h" />
+    <ClInclude Include="libANGLE\renderer\BufferImpl_mock.h" />
+    <ClInclude Include="libANGLE\renderer\CompilerImpl.h" />
+    <ClCompile Include="libANGLE\renderer\ContextImpl.cpp" />
+    <ClInclude Include="libANGLE\renderer\ContextImpl.h" />
+    <ClCompile Include="libANGLE\renderer\DeviceImpl.cpp" />
+    <ClInclude Include="libANGLE\renderer\DeviceImpl.h" />
+    <ClCompile Include="libANGLE\renderer\DisplayImpl.cpp" />
+    <ClInclude Include="libANGLE\renderer\DisplayImpl.h" />
+    <ClInclude Include="libANGLE\renderer\EGLImplFactory.h" />
+    <ClInclude Include="libANGLE\renderer\EGLSyncImpl.h" />
+    <ClInclude Include="libANGLE\renderer\FenceNVImpl.h" />
+    <ClInclude Include="libANGLE\renderer\Format.h" />
+    <ClInclude Include="libANGLE\renderer\FormatID_autogen.h" />
+    <ClCompile Include="libANGLE\renderer\Format_table_autogen.cpp" />
+    <ClInclude Include="libANGLE\renderer\FramebufferAttachmentObjectImpl.h" />
+    <ClInclude Include="libANGLE\renderer\FramebufferImpl.h" />
+    <ClInclude Include="libANGLE\renderer\FramebufferImpl_mock.h" />
+    <ClInclude Include="libANGLE\renderer\GLImplFactory.h" />
+    <ClInclude Include="libANGLE\renderer\ImageImpl.h" />
+    <ClInclude Include="libANGLE\renderer\ImageImpl_mock.h" />
+    <ClInclude Include="libANGLE\renderer\MemoryObjectImpl.h" />
+    <ClInclude Include="libANGLE\renderer\OverlayImpl.h" />
+    <ClInclude Include="libANGLE\renderer\PathImpl.h" />
+    <ClInclude Include="libANGLE\renderer\ProgramImpl.h" />
+    <ClInclude Include="libANGLE\renderer\ProgramImpl_mock.h" />
+    <ClInclude Include="libANGLE\renderer\ProgramPipelineImpl.h" />
+    <ClCompile Include="libANGLE\renderer\QueryImpl.cpp" />
+    <ClInclude Include="libANGLE\renderer\QueryImpl.h" />
+    <ClInclude Include="libANGLE\renderer\RenderTargetCache.h" />
+    <ClInclude Include="libANGLE\renderer\RenderbufferImpl.h" />
+    <ClInclude Include="libANGLE\renderer\RenderbufferImpl_mock.h" />
+    <ClInclude Include="libANGLE\renderer\SamplerImpl.h" />
+    <ClInclude Include="libANGLE\renderer\SemaphoreImpl.h" />
+    <ClCompile Include="libANGLE\renderer\ShaderImpl.cpp" />
+    <ClInclude Include="libANGLE\renderer\ShaderImpl.h" />
+    <ClInclude Include="libANGLE\renderer\StreamProducerImpl.h" />
+    <ClCompile Include="libANGLE\renderer\SurfaceImpl.cpp" />
+    <ClInclude Include="libANGLE\renderer\SurfaceImpl.h" />
+    <ClInclude Include="libANGLE\renderer\SyncImpl.h" />
+    <ClCompile Include="libANGLE\renderer\TextureImpl.cpp" />
+    <ClInclude Include="libANGLE\renderer\TextureImpl.h" />
+    <ClInclude Include="libANGLE\renderer\TextureImpl_mock.h" />
+    <ClInclude Include="libANGLE\renderer\TransformFeedbackImpl.h" />
+    <ClInclude Include="libANGLE\renderer\TransformFeedbackImpl_mock.h" />
+    <ClInclude Include="libANGLE\renderer\VertexArrayImpl.h" />
+    <ClInclude Include="libANGLE\renderer\copyvertex.h" />
+    <ClInclude Include="libANGLE\renderer\copyvertex.inc.h" />
+    <ClCompile Include="libANGLE\renderer\driver_utils.cpp" />
+    <ClInclude Include="libANGLE\renderer\driver_utils.h" />
+    <ClInclude Include="libANGLE\renderer\load_functions_table.h" />
+    <ClCompile Include="libANGLE\renderer\load_functions_table_autogen.cpp" />
+    <ClCompile Include="libANGLE\renderer\null\BufferNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\BufferNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\CompilerNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\CompilerNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\ContextNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\ContextNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\DeviceNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\DeviceNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\DisplayNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\DisplayNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\FenceNVNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\FenceNVNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\FramebufferNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\FramebufferNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\ImageNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\ImageNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\PathNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\PathNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\ProgramNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\ProgramNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\ProgramPipelineNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\ProgramPipelineNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\QueryNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\QueryNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\RenderbufferNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\RenderbufferNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\SamplerNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\SamplerNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\ShaderNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\ShaderNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\SurfaceNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\SurfaceNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\SyncNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\SyncNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\TextureNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\TextureNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\TransformFeedbackNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\TransformFeedbackNULL.h" />
+    <ClCompile Include="libANGLE\renderer\null\VertexArrayNULL.cpp" />
+    <ClInclude Include="libANGLE\renderer\null\VertexArrayNULL.h" />
+    <ClCompile Include="libANGLE\renderer\renderer_utils.cpp" />
+    <ClInclude Include="libANGLE\renderer\renderer_utils.h" />
+    <ClInclude Include="libANGLE\renderer\serial_utils.h" />
+    <ClInclude Include="libANGLE\trace.h" />
+    <ClCompile Include="libANGLE\validationEGL.cpp" />
+    <ClInclude Include="libANGLE\validationEGL.h" />
+    <ClCompile Include="libANGLE\validationES.cpp" />
+    <ClInclude Include="libANGLE\validationES.h" />
+    <ClCompile Include="libANGLE\validationES1.cpp" />
+    <ClInclude Include="libANGLE\validationES1.h" />
+    <ClInclude Include="libANGLE\validationES1_autogen.h" />
+    <ClCompile Include="libANGLE\validationES2.cpp" />
+    <ClInclude Include="libANGLE\validationES2.h" />
+    <ClInclude Include="libANGLE\validationES2_autogen.h" />
+    <ClCompile Include="libANGLE\validationES3.cpp" />
+    <ClInclude Include="libANGLE\validationES3.h" />
+    <ClCompile Include="libANGLE\validationES31.cpp" />
+    <ClInclude Include="libANGLE\validationES31.h" />
+    <ClInclude Include="libANGLE\validationES31_autogen.h" />
+    <ClCompile Include="libANGLE\validationES32.cpp" />
+    <ClInclude Include="libANGLE\validationES32.h" />
+    <ClInclude Include="libANGLE\validationES32_autogen.h" />
+    <ClInclude Include="libANGLE\validationES3_autogen.h" />
+    <ClCompile Include="libANGLE\validationESEXT.cpp" />
+    <ClInclude Include="libANGLE\validationESEXT.h" />
+    <ClInclude Include="libANGLE\validationESEXT_autogen.h" />
+    <ClCompile Include="libANGLE\validationGL1.cpp" />
+    <ClCompile Include="libANGLE\validationGL11.cpp" />
+    <ClInclude Include="libANGLE\validationGL11_autogen.h" />
+    <ClCompile Include="libANGLE\validationGL12.cpp" />
+    <ClInclude Include="libANGLE\validationGL12_autogen.h" />
+    <ClCompile Include="libANGLE\validationGL13.cpp" />
+    <ClInclude Include="libANGLE\validationGL13_autogen.h" />
+    <ClCompile Include="libANGLE\validationGL14.cpp" />
+    <ClInclude Include="libANGLE\validationGL14_autogen.h" />
+    <ClCompile Include="libANGLE\validationGL15.cpp" />
+    <ClInclude Include="libANGLE\validationGL15_autogen.h" />
+    <ClInclude Include="libANGLE\validationGL1_autogen.h" />
+    <ClCompile Include="libANGLE\validationGL2.cpp" />
+    <ClCompile Include="libANGLE\validationGL21.cpp" />
+    <ClInclude Include="libANGLE\validationGL21_autogen.h" />
+    <ClInclude Include="libANGLE\validationGL2_autogen.h" />
+    <ClCompile Include="libANGLE\validationGL3.cpp" />
+    <ClCompile Include="libANGLE\validationGL31.cpp" />
+    <ClInclude Include="libANGLE\validationGL31_autogen.h" />
+    <ClCompile Include="libANGLE\validationGL32.cpp" />
+    <ClInclude Include="libANGLE\validationGL32_autogen.h" />
+    <ClCompile Include="libANGLE\validationGL33.cpp" />
+    <ClInclude Include="libANGLE\validationGL33_autogen.h" />
+    <ClInclude Include="libANGLE\validationGL3_autogen.h" />
+    <ClCompile Include="libANGLE\validationGL4.cpp" />
+    <ClCompile Include="libANGLE\validationGL41.cpp" />
+    <ClInclude Include="libANGLE\validationGL41_autogen.h" />
+    <ClCompile Include="libANGLE\validationGL42.cpp" />
+    <ClInclude Include="libANGLE\validationGL42_autogen.h" />
+    <ClCompile Include="libANGLE\validationGL43.cpp" />
+    <ClInclude Include="libANGLE\validationGL43_autogen.h" />
+    <ClCompile Include="libANGLE\validationGL44.cpp" />
+    <ClInclude Include="libANGLE\validationGL44_autogen.h" />
+    <ClCompile Include="libANGLE\validationGL45.cpp" />
+    <ClInclude Include="libANGLE\validationGL45_autogen.h" />
+    <ClCompile Include="libANGLE\validationGL46.cpp" />
+    <ClInclude Include="libANGLE\validationGL46_autogen.h" />
+    <ClInclude Include="libANGLE\validationGL4_autogen.h" />
+    <ClCompile Include="third_party\systeminfo\SystemInfo.cpp" />
+    <ClCompile Include="libANGLE\renderer\d3d\BufferD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\BufferD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\CompilerD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\CompilerD3D.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\ContextD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\DeviceD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\DeviceD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\DisplayD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\DisplayD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\DynamicHLSL.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\DynamicHLSL.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\DynamicImage2DHLSL.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\DynamicImage2DHLSL.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\EGLImageD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\EGLImageD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\FramebufferD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\FramebufferD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\HLSLCompiler.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\HLSLCompiler.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\ImageD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\ImageD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\IndexBuffer.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\IndexBuffer.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\IndexDataManager.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\IndexDataManager.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\NativeWindowD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\NativeWindowD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\ProgramD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\ProgramD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\RenderTargetD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\RenderTargetD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\RenderbufferD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\RenderbufferD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\RendererD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\RendererD3D.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\SamplerD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\ShaderD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\ShaderD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\ShaderExecutableD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\ShaderExecutableD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\SurfaceD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\SurfaceD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\SwapChainD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\SwapChainD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\TextureD3D.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\TextureD3D.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\TextureStorage.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\VertexBuffer.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\VertexBuffer.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\VertexDataManager.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\VertexDataManager.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Blit11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Blit11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Buffer11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Buffer11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Clear11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Clear11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Context11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Context11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\DebugAnnotator11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\DebugAnnotator11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\ExternalImageSiblingImpl11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\ExternalImageSiblingImpl11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Fence11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Fence11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Framebuffer11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Framebuffer11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Image11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Image11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\IndexBuffer11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\IndexBuffer11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\InputLayoutCache.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\InputLayoutCache.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\MappedSubresourceVerifier11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\MappedSubresourceVerifier11.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\NativeWindow11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\PixelTransfer11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\PixelTransfer11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Program11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Program11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\ProgramPipeline11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\ProgramPipeline11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Query11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Query11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\RenderStateCache.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\RenderStateCache.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\RenderTarget11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\RenderTarget11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Renderer11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Renderer11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\ResourceManager11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\ResourceManager11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\ShaderExecutable11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\ShaderExecutable11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\StateManager11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\StateManager11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\StreamProducerD3DTexture.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\StreamProducerD3DTexture.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\SwapChain11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\SwapChain11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\TextureStorage11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\TextureStorage11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\TransformFeedback11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\TransformFeedback11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Trim11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Trim11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\VertexArray11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\VertexArray11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\VertexBuffer11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\VertexBuffer11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\dxgi_format_map_autogen.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\dxgi_support_table.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\dxgi_support_table_autogen.cpp" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\formatutils11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\formatutils11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\renderer11_utils.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\renderer11_utils.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\buffertotexture11_gs.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\buffertotexture11_ps_4f.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\buffertotexture11_ps_4i.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\buffertotexture11_ps_4ui.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\buffertotexture11_vs.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clear11_fl9vs.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clear11multiviewgs.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clear11multiviewvs.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clear11vs.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\cleardepth11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearfloat11_fl9ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearfloat11ps1.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearfloat11ps2.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearfloat11ps3.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearfloat11ps4.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearfloat11ps5.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearfloat11ps6.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearfloat11ps7.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearfloat11ps8.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearsint11ps1.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearsint11ps2.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearsint11ps3.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearsint11ps4.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearsint11ps5.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearsint11ps6.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearsint11ps7.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearsint11ps8.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearuint11ps1.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearuint11ps2.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearuint11ps3.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearuint11ps4.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearuint11ps5.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearuint11ps6.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearuint11ps7.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearuint11ps8.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_luma_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_luma_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_luma_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_lumaalpha_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_lumaalpha_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_lumaalpha_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_rgb_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_rgb_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_rgb_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_rgb_565_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_rgb_565_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_rgb_565_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_rgba_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_rgba_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_rgba_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_rgba_4444_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_rgba_4444_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_rgba_4444_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_rgba_5551_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_rgba_5551_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_pm_rgba_5551_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_luma_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_luma_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_luma_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_lumaalpha_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_lumaalpha_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_lumaalpha_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgb_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgb_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgb_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgb_565_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgb_565_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgb_565_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgba_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgba_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgba_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgba_4444_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgba_4444_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgba_4444_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgba_4444_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgba_5551_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgba_5551_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgba_5551_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftof_um_rgba_5551_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftoi_pm_rgb_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftoi_pm_rgb_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftoi_pm_rgba_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftoi_pm_rgba_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftoi_pt_rgb_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftoi_pt_rgb_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftoi_pt_rgba_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftoi_pt_rgba_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftoi_um_rgb_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftoi_um_rgb_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftoi_um_rgba_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftoi_um_rgba_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_pm_rgb_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_pm_rgb_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_pm_rgb_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_pm_rgba_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_pm_rgba_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_pm_rgba_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_pt_rgb_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_pt_rgb_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_pt_rgb_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_pt_rgba_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_pt_rgba_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_pt_rgba_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_um_rgb_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_um_rgb_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_um_rgb_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_um_rgba_2d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_um_rgba_2darray_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\multiplyalpha_ftou_um_rgba_3d_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthrough2d11vs.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthrough3d11gs.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthrough3d11vs.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthrougha2d11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughdepth2d11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughlum2d11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughlum2darray11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughlum3d11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughlumalpha2d11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughlumalpha2darray11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughlumalpha3d11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughr2d11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughr2darray11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughr2darrayi11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughr2darrayui11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughr2di11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughr2dui11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughr3d11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughr3di11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughr3dui11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrg2d11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrg2darray11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrg2darrayi11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrg2darrayui11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrg2di11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrg2dui11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrg3d11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrg3di11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrg3dui11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb2d11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb2d_565_11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb2darray11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb2darray_565_11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb2darrayi11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb2darrayui11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb2di11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb2dui11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb3d11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb3d_565_11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb3di11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb3dui11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba2d11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba2d_4444_11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba2d_5551_11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba2darray11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba2darray_4444_11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba2darray_5551_11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba2darrayi11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba2darrayui11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba2di11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba2dms11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba2dui11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba3d11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba3d_4444_11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba3d_5551_11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba3di11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba3dui11ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\resolvecolor2dps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\resolvedepth11_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\resolvedepthstencil11_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\resolvedepthstencil11_vs.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\resolvestencil11_ps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzlef2darrayps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzlef2dps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzlef3dps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzlei2darrayps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzlei2dps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzlei3dps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzleui2darrayps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzleui2dps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzleui3dps.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\texture_format_table.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\texture_format_table.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\texture_format_table_autogen.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\texture_format_table_utils.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\formatutilsD3D.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\converged\CompositorNativeWindow11.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\converged\CompositorNativeWindow11.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d11\win32\NativeWindow11Win32.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d11\win32\NativeWindow11Win32.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Blit9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Blit9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Buffer9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Buffer9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Context9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Context9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\DebugAnnotator9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\DebugAnnotator9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Fence9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Fence9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Framebuffer9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Framebuffer9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Image9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Image9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\IndexBuffer9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\IndexBuffer9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\NativeWindow9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\NativeWindow9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Query9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Query9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\RenderTarget9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\RenderTarget9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Renderer9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Renderer9.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\ShaderCache.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\ShaderExecutable9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\ShaderExecutable9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\StateManager9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\StateManager9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\SwapChain9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\SwapChain9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\TextureStorage9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\TextureStorage9.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\VertexArray9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\VertexBuffer9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\VertexBuffer9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\VertexDeclarationCache.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\VertexDeclarationCache.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\formatutils9.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\formatutils9.h" />
+    <ClCompile Include="libANGLE\renderer\d3d\d3d9\renderer9_utils.cpp" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\renderer9_utils.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\componentmaskpremultps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\componentmaskps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\componentmaskunmultps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\luminancepremultps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\luminanceps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\luminanceunmultps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\passthroughps.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\standardvs.h" />
+    <ClInclude Include="libANGLE\renderer\d3d\d3d9\vertexconversion.h" />
+    <ClCompile Include="libANGLE\renderer\gl\BlitGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\BlitGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\BufferGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\BufferGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\ClearMultiviewGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\ClearMultiviewGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\CompilerGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\CompilerGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\ContextGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\ContextGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\DispatchTableGL_autogen.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\DispatchTableGL_autogen.h" />
+    <ClCompile Include="libANGLE\renderer\gl\DisplayGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\DisplayGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\FenceNVGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\FenceNVGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\FramebufferGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\FramebufferGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\FunctionsGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\FunctionsGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\ImageGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\ImageGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\MemoryObjectGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\MemoryObjectGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\PathGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\PathGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\ProgramGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\ProgramGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\ProgramPipelineGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\ProgramPipelineGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\QueryGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\QueryGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\RenderbufferGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\RenderbufferGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\RendererGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\RendererGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\SamplerGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\SamplerGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\SemaphoreGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\SemaphoreGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\ShaderGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\ShaderGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\StateManagerGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\StateManagerGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\SurfaceGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\SurfaceGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\SyncGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\SyncGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\TextureGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\TextureGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\TransformFeedbackGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\TransformFeedbackGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\VertexArrayGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\VertexArrayGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\formatutilsgl.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\formatutilsgl.h" />
+    <ClInclude Include="libANGLE\renderer\gl\functionsgl_enums.h" />
+    <ClInclude Include="libANGLE\renderer\gl\functionsgl_typedefs.h" />
+    <ClCompile Include="libANGLE\renderer\gl\null_functions.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\null_functions.h" />
+    <ClCompile Include="libANGLE\renderer\gl\renderergl_utils.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\renderergl_utils.h" />
+    <ClCompile Include="libANGLE\renderer\gl\wgl\ContextWGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\wgl\ContextWGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\wgl\D3DTextureSurfaceWGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\wgl\D3DTextureSurfaceWGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\wgl\DXGISwapChainWindowSurfaceWGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\wgl\DXGISwapChainWindowSurfaceWGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\wgl\DisplayWGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\wgl\DisplayWGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\wgl\FunctionsWGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\wgl\FunctionsWGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\wgl\PbufferSurfaceWGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\wgl\PbufferSurfaceWGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\wgl\RendererWGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\wgl\RendererWGL.h" />
+    <ClInclude Include="libANGLE\renderer\gl\wgl\SurfaceWGL.h" />
+    <ClCompile Include="libANGLE\renderer\gl\wgl\WindowSurfaceWGL.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\wgl\WindowSurfaceWGL.h" />
+    <ClInclude Include="libANGLE\renderer\gl\wgl\functionswgl_typedefs.h" />
+    <ClCompile Include="libANGLE\renderer\gl\wgl\wgl_utils.cpp" />
+    <ClInclude Include="libANGLE\renderer\gl\wgl\wgl_utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="common\event_tracer.h"/>
-    <ClInclude Include="libANGLE\AttributeMap.h"/>
-    <ClInclude Include="libANGLE\BinaryStream.h"/>
-    <ClInclude Include="libANGLE\Buffer.h"/>
-    <ClInclude Include="libANGLE\Caps.h"/>
-    <ClInclude Include="libANGLE\Compiler.h"/>
-    <ClInclude Include="libANGLE\Config.h"/>
-    <ClInclude Include="libANGLE\Constants.h"/>
-    <ClInclude Include="libANGLE\Context.h"/>
-    <ClInclude Include="libANGLE\ContextState.h"/>
-    <ClInclude Include="libANGLE\Debug.h"/>
-    <ClInclude Include="libANGLE\Device.h"/>
-    <ClInclude Include="libANGLE\Display.h"/>
-    <ClInclude Include="libANGLE\Error.h"/>
-    <ClInclude Include="libANGLE\Fence.h"/>
-    <ClInclude Include="libANGLE\Framebuffer.h"/>
-    <ClInclude Include="libANGLE\FramebufferAttachment.h"/>
-    <ClInclude Include="libANGLE\HandleAllocator.h"/>
-    <ClInclude Include="libANGLE\HandleRangeAllocator.h"/>
-    <ClInclude Include="libANGLE\Image.h"/>
-    <ClInclude Include="libANGLE\ImageIndex.h"/>
-    <ClInclude Include="libANGLE\IndexRangeCache.h"/>
-    <ClInclude Include="libANGLE\Path.h"/>
-    <ClInclude Include="libANGLE\Program.h"/>
-    <ClInclude Include="libANGLE\Query.h"/>
-    <ClInclude Include="libANGLE\RefCountObject.h"/>
-    <ClInclude Include="libANGLE\Renderbuffer.h"/>
-    <ClInclude Include="libANGLE\ResourceManager.h"/>
-    <ClInclude Include="libANGLE\Sampler.h"/>
-    <ClInclude Include="libANGLE\Shader.h"/>
-    <ClInclude Include="libANGLE\State.h"/>
-    <ClInclude Include="libANGLE\Stream.h"/>
-    <ClInclude Include="libANGLE\Surface.h"/>
-    <ClInclude Include="libANGLE\Texture.h"/>
-    <ClInclude Include="libANGLE\Thread.h"/>
-    <ClInclude Include="libANGLE\TransformFeedback.h"/>
-    <ClInclude Include="libANGLE\Uniform.h"/>
-    <ClInclude Include="libANGLE\Version.h"/>
-    <ClInclude Include="libANGLE\VertexArray.h"/>
-    <ClInclude Include="libANGLE\VertexAttribute.h"/>
-    <ClInclude Include="libANGLE\WorkerThread.h"/>
-    <ClInclude Include="libANGLE\angletypes.h"/>
-    <ClInclude Include="libANGLE\features.h"/>
-    <ClInclude Include="libANGLE\formatutils.h"/>
-    <ClInclude Include="libANGLE\histogram_macros.h"/>
-    <ClInclude Include="libANGLE\queryconversions.h"/>
-    <ClInclude Include="libANGLE\queryutils.h"/>
-    <ClInclude Include="libANGLE\renderer\BufferImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\CompilerImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\ContextImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\driver_utils.h"/>
-    <ClInclude Include="libANGLE\renderer\DeviceImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\DisplayImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\EGLImplFactory.h"/>
-    <ClInclude Include="libANGLE\renderer\FenceNVImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\FenceSyncImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\Format.h"/>
-    <ClInclude Include="libANGLE\renderer\FramebufferAttachmentObjectImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\FramebufferImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\GLImplFactory.h"/>
-    <ClInclude Include="libANGLE\renderer\ImageImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\ProgramImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\QueryImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\RenderbufferImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\SamplerImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\ShaderImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\StreamProducerImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\SurfaceImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\TextureImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\TransformFeedbackImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\VertexArrayImpl.h"/>
-    <ClInclude Include="libANGLE\renderer\load_functions_table.h"/>
-    <ClInclude Include="libANGLE\renderer\renderer_utils.h"/>
-    <ClInclude Include="libANGLE\signal_utils.h"/>
-    <ClInclude Include="libANGLE\validationEGL.h"/>
-    <ClInclude Include="libANGLE\validationES.h"/>
-    <ClInclude Include="libANGLE\validationES2.h"/>
-    <ClInclude Include="libANGLE\validationES3.h"/>
-    <ClInclude Include="libANGLE\validationES31.h"/>
-    <ClInclude Include="third_party\murmurhash\MurmurHash3.h"/>
-    <ClInclude Include="..\include\angle_gl.h"/>
-    <ClInclude Include="..\include\export.h"/>
-    <ClInclude Include="..\include\EGL\egl.h"/>
-    <ClInclude Include="..\include\EGL\eglext.h"/>
-    <ClInclude Include="..\include\EGL\eglplatform.h"/>
-    <ClInclude Include="..\include\GLES2\gl2.h"/>
-    <ClInclude Include="..\include\GLES2\gl2ext.h"/>
-    <ClInclude Include="..\include\GLES2\gl2platform.h"/>
-    <ClInclude Include="..\include\GLES3\gl3.h"/>
-    <ClInclude Include="..\include\GLES3\gl3platform.h"/>
-    <ClInclude Include="..\include\GLES3\gl31.h"/>
-    <ClInclude Include="..\include\GLES3\gl32.h"/>
-    <ClInclude Include="..\include\GLSLANG\ShaderLang.h"/>
-    <ClInclude Include="..\include\GLSLANG\ShaderVars.h"/>
-    <ClInclude Include="..\include\KHR\khrplatform.h"/>
-    <ClInclude Include="..\include\platform\Platform.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\hlsl\VaryingPacking.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\hlsl\hlsl_utils.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\BufferD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\CompilerD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\DeviceD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\DisplayD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\DynamicHLSL.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\EGLImageD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\formatutilsD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\FramebufferD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\HLSLCompiler.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\ImageD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\IndexBuffer.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\IndexDataManager.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\NativeWindowD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\ProgramD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\RenderbufferD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\RendererD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\RenderTargetD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\SamplerD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\ShaderD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\ShaderExecutableD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\SurfaceD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\SwapChainD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\TextureD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\TextureStorage.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\VertexBuffer.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\VertexDataManager.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\WorkaroundsD3D.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Blit9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Buffer9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Context9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\DebugAnnotator9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Fence9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\formatutils9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Framebuffer9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Image9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\IndexBuffer9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\NativeWindow9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Query9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\Renderer9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\renderer9_utils.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\RenderTarget9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\ShaderCache.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\ShaderExecutable9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\componentmaskps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\componentmaskpremultps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\componentmaskunmultps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\luminanceps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\luminancepremultps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\luminanceunmultps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\passthroughps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\shaders\compiled\standardvs.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\StateManager9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\SwapChain9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\TextureStorage9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\VertexArray9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\VertexBuffer9.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\vertexconversion.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d9\VertexDeclarationCache.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Blit11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Buffer11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Clear11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Context11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\copyvertex.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\DebugAnnotator11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\dxgi_support_table.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Fence11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\formatutils11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Framebuffer11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Image11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\IndexBuffer11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\InputLayoutCache.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\NativeWindow11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\PixelTransfer11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Query11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Renderer11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\renderer11_utils.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\RenderStateCache.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\RenderTarget11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\ShaderExecutable11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\buffertotexture11_gs.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\buffertotexture11_ps_4f.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\buffertotexture11_ps_4i.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\buffertotexture11_ps_4ui.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\buffertotexture11_vs.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearfloat11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearfloat11vs.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearsint11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearsint11vs.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearuint11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\clearuint11vs.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthrough2d11vs.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthrough3d11gs.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthrough3d11vs.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughdepth2d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughlum2d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughlum3d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughlumalpha2d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughlumalpha3d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughr2d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughr2di11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughr2dui11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughr3d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughr3di11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughr3dui11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrg2d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrg2di11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrg2dui11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrg3d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrg3di11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrg3dui11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb2d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgbpremultiply2d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgbunmultiply2d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb2di11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb2dui11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb3d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb3di11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgb3dui11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba2d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgbapremultiply2d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgbaunmultiply2d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba2di11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba2dui11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba3d11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba3di11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\passthroughrgba3dui11ps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzlef2darrayps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzlef2dps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzlef3dps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzlei2darrayps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzlei2dps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzlei3dps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzleui2darrayps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzleui2dps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\shaders\compiled\swizzleui3dps.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\StateManager11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\StreamProducerNV12.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\SwapChain11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\TextureStorage11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\TransformFeedback11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\Trim11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\texture_format_table_utils.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\texture_format_table.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\VertexArray11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\VertexBuffer11.h"/>
-    <ClInclude Include="libANGLE\renderer\d3d\d3d11\win32\NativeWindow11Win32.h"/>
-    <ClInclude Include="third_party\systeminfo\SystemInfo.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\BlitGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\BufferGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\CompilerGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\ContextGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\DisplayGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\FenceNVGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\FenceSyncGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\FramebufferGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\FunctionsGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\PathGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\ProgramGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\QueryGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\RenderbufferGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\RendererGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\SamplerGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\ShaderGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\StateManagerGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\SurfaceGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\TextureGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\TransformFeedbackGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\VertexArrayGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\WorkaroundsGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\formatutilsgl.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\functionsgl_enums.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\functionsgl_typedefs.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\renderergl_utils.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\wgl\D3DTextureSurfaceWGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\wgl\DisplayWGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\wgl\DXGISwapChainWindowSurfaceWGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\wgl\FunctionsWGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\wgl\PbufferSurfaceWGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\wgl\WindowSurfaceWGL.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\wgl\functionswgl_typedefs.h"/>
-    <ClInclude Include="libANGLE\renderer\gl\wgl\wgl_utils.h"/>
-    <ClInclude Include="third_party\khronos\GL\wglext.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\BufferVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\CompilerVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\ContextVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\DeviceVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\DisplayVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\FenceNVVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\FenceSyncVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\FramebufferVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\ImageVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\ProgramVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\QueryVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\RenderbufferVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\RendererVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\SamplerVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\ShaderVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\SurfaceVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\TextureVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\TransformFeedbackVk.h"/>
-    <ClInclude Include="libANGLE\renderer\vulkan\VertexArrayVk.h"/>
-    <ClInclude Include="libANGLE\renderer\null\BufferNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\CompilerNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\ContextNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\DeviceNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\DisplayNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\FenceNVNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\FenceSyncNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\FramebufferNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\ImageNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\PathNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\ProgramNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\QueryNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\RenderbufferNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\SamplerNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\ShaderNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\SurfaceNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\TextureNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\TransformFeedbackNULL.h"/>
-    <ClInclude Include="libANGLE\renderer\null\VertexArrayNULL.h"/>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="common\event_tracer.cpp"/>
-    <ClCompile Include="libANGLE\AttributeMap.cpp"/>
-    <ClCompile Include="libANGLE\Buffer.cpp"/>
-    <ClCompile Include="libANGLE\Caps.cpp"/>
-    <ClCompile Include="libANGLE\Compiler.cpp"/>
-    <ClCompile Include="libANGLE\Config.cpp"/>
-    <ClCompile Include="libANGLE\Context.cpp"/>
-    <ClCompile Include="libANGLE\ContextState.cpp"/>
-    <ClCompile Include="libANGLE\Debug.cpp"/>
-    <ClCompile Include="libANGLE\Device.cpp"/>
-    <ClCompile Include="libANGLE\Display.cpp"/>
-    <ClCompile Include="libANGLE\Error.cpp"/>
-    <ClCompile Include="libANGLE\Fence.cpp"/>
-    <ClCompile Include="libANGLE\Framebuffer.cpp"/>
-    <ClCompile Include="libANGLE\FramebufferAttachment.cpp"/>
-    <ClCompile Include="libANGLE\HandleAllocator.cpp"/>
-    <ClCompile Include="libANGLE\HandleRangeAllocator.cpp"/>
-    <ClCompile Include="libANGLE\Image.cpp"/>
-    <ClCompile Include="libANGLE\ImageIndex.cpp"/>
-    <ClCompile Include="libANGLE\IndexRangeCache.cpp"/>
-    <ClCompile Include="libANGLE\Path.cpp"/>
-    <ClCompile Include="libANGLE\Platform.cpp"/>
-    <ClCompile Include="libANGLE\Program.cpp"/>
-    <ClCompile Include="libANGLE\Query.cpp"/>
-    <ClCompile Include="libANGLE\Renderbuffer.cpp"/>
-    <ClCompile Include="libANGLE\ResourceManager.cpp"/>
-    <ClCompile Include="libANGLE\Sampler.cpp"/>
-    <ClCompile Include="libANGLE\Shader.cpp"/>
-    <ClCompile Include="libANGLE\State.cpp"/>
-    <ClCompile Include="libANGLE\Stream.cpp"/>
-    <ClCompile Include="libANGLE\Surface.cpp"/>
-    <ClCompile Include="libANGLE\Texture.cpp"/>
-    <ClCompile Include="libANGLE\Thread.cpp"/>
-    <ClCompile Include="libANGLE\TransformFeedback.cpp"/>
-    <ClCompile Include="libANGLE\Uniform.cpp"/>
-    <ClCompile Include="libANGLE\VertexArray.cpp"/>
-    <ClCompile Include="libANGLE\VertexAttribute.cpp"/>
-    <ClCompile Include="libANGLE\WorkerThread.cpp"/>
-    <ClCompile Include="libANGLE\angletypes.cpp"/>
-    <ClCompile Include="libANGLE\es3_copy_conversion_table_autogen.cpp"/>
-    <ClCompile Include="libANGLE\format_map_autogen.cpp"/>
-    <ClCompile Include="libANGLE\formatutils.cpp"/>
-    <ClCompile Include="libANGLE\queryconversions.cpp"/>
-    <ClCompile Include="libANGLE\queryutils.cpp"/>
-    <ClCompile Include="libANGLE\renderer\ContextImpl.cpp"/>
-    <ClCompile Include="libANGLE\renderer\driver_utils.cpp"/>
-    <ClCompile Include="libANGLE\renderer\DeviceImpl.cpp"/>
-    <ClCompile Include="libANGLE\renderer\DisplayImpl.cpp"/>
-    <ClCompile Include="libANGLE\renderer\Format_table_autogen.cpp"/>
-    <ClCompile Include="libANGLE\renderer\SurfaceImpl.cpp"/>
-    <ClCompile Include="libANGLE\renderer\TextureImpl.cpp"/>
-    <ClCompile Include="libANGLE\renderer\load_functions_table_autogen.cpp"/>
-    <ClCompile Include="libANGLE\renderer\renderer_utils.cpp"/>
-    <ClCompile Include="libANGLE\signal_utils.cpp"/>
-    <ClCompile Include="libANGLE\validationEGL.cpp"/>
-    <ClCompile Include="libANGLE\validationES.cpp"/>
-    <ClCompile Include="libANGLE\validationES2.cpp"/>
-    <ClCompile Include="libANGLE\validationES3.cpp"/>
-    <ClCompile Include="libANGLE\validationES31.cpp"/>
-    <ClCompile Include="third_party\murmurhash\MurmurHash3.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\hlsl\VaryingPacking.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\BufferD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\CompilerD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\DeviceD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\DisplayD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\DynamicHLSL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\EGLImageD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\FramebufferD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\HLSLCompiler.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\ImageD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\IndexBuffer.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\IndexDataManager.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\NativeWindowD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\ProgramD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\RenderbufferD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\RendererD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\RenderTargetD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\ShaderD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\ShaderExecutableD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\SurfaceD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\SwapChainD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\TextureD3D.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\VertexBuffer.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\VertexDataManager.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Blit9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Buffer9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Context9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\DebugAnnotator9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Fence9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\formatutils9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Framebuffer9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Image9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\IndexBuffer9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\NativeWindow9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Query9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\Renderer9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\renderer9_utils.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\RenderTarget9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\ShaderExecutable9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\StateManager9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\SwapChain9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\TextureStorage9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\VertexBuffer9.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d9\VertexDeclarationCache.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Blit11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Buffer11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Clear11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Context11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\DebugAnnotator11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\dxgi_format_map_autogen.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\dxgi_support_table.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Fence11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\formatutils11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Framebuffer11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Image11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\IndexBuffer11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\InputLayoutCache.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\PixelTransfer11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Query11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Renderer11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\renderer11_utils.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\RenderStateCache.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\RenderTarget11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\ShaderExecutable11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\StateManager11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\StreamProducerNV12.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\SwapChain11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\TextureStorage11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\TransformFeedback11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\Trim11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\texture_format_table_autogen.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\texture_format_table.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\VertexArray11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\VertexBuffer11.cpp"/>
-    <ClCompile Include="libANGLE\renderer\d3d\d3d11\win32\NativeWindow11Win32.cpp"/>
-    <ClCompile Include="third_party\systeminfo\SystemInfo.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\BlitGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\BufferGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\CompilerGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\ContextGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\DisplayGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\FenceNVGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\FenceSyncGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\FramebufferGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\FunctionsGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\PathGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\ProgramGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\QueryGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\RenderbufferGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\RendererGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\SamplerGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\ShaderGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\StateManagerGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\SurfaceGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\TextureGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\TransformFeedbackGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\VertexArrayGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\formatutilsgl.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\renderergl_utils.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\wgl\D3DTextureSurfaceWGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\wgl\DisplayWGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\wgl\DXGISwapChainWindowSurfaceWGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\wgl\FunctionsWGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\wgl\PbufferSurfaceWGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\wgl\WindowSurfaceWGL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\gl\wgl\wgl_utils.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\BufferVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\CompilerVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\ContextVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\DeviceVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\DisplayVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\FenceNVVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\FenceSyncVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\FramebufferVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\ImageVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\ProgramVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\QueryVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\RenderbufferVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\RendererVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\SamplerVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\ShaderVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\SurfaceVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\TextureVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\TransformFeedbackVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\vulkan\VertexArrayVk.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\BufferNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\CompilerNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\ContextNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\DeviceNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\DisplayNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\FenceNVNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\FenceSyncNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\FramebufferNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\ImageNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\PathNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\ProgramNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\QueryNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\RenderbufferNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\SamplerNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\ShaderNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\SurfaceNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\TextureNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\TransformFeedbackNULL.cpp"/>
-    <ClCompile Include="libANGLE\renderer\null\VertexArrayNULL.cpp"/>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="commit_id.vcxproj">
-      <Project>{6CCCC557-DFA3-68D4-31FA-1EFB0C5F37B2}</Project>
+    <ProjectReference Include="angle_common.vcxproj">
+      <Project>{3C6AC459-0C35-375B-8749-5CF9C36E8AB7}</Project>
+      <Name>angle_common</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="copy_compiler_dll.vcxproj">
-      <Project>{47A3E249-4072-CEAC-C824-93730F91967A}</Project>
+    <ProjectReference Include="angle_gpu_info_util.vcxproj">
+      <Project>{93BB22CC-C87C-3CB0-AAD3-882C8CCBF1E5}</Project>
+      <Name>angle_gpu_info_util</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="angle_image_util.vcxproj">
+      <Project>{D7E4159C-82CD-30FD-B797-1E64073E89FB}</Project>
+      <Name>angle_image_util</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="angle_preprocessor.vcxproj">
+      <Project>{CACA71F1-88C2-35E6-BEA8-A51E2453D7AE}</Project>
+      <Name>angle_preprocessor</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="angle_translator.vcxproj">
+      <Project>{7B2B9140-AF72-3F9C-9457-7B1F1669EA8B}</Project>
+      <Name>angle_translator</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
-  <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets"/>
-  <ImportGroup Label="ExtensionTargets"/>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
 </Project>

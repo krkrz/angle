@@ -1,32 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="libEGL">
-      <UniqueIdentifier>{D633941D-C923-DFCE-3A9B-DCF851CC7DBA}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libEGL">
-      <UniqueIdentifier>{D633941D-C923-DFCE-3A9B-DCF851CC7DBA}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libEGL">
-      <UniqueIdentifier>{D633941D-C923-DFCE-3A9B-DCF851CC7DBA}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libEGL">
-      <UniqueIdentifier>{D633941D-C923-DFCE-3A9B-DCF851CC7DBA}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include=".\libEGL\libEGL.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="libEGL\libEGL.cpp">
-      <Filter>libEGL</Filter>
-    </ClCompile>
-    <None Include="libEGL\libEGL.def">
-      <Filter>libEGL</Filter>
-    </None>
-    <ResourceCompile Include="libEGL\libEGL.rc">
-      <Filter>libEGL</Filter>
-    </ResourceCompile>
-    <ClInclude Include="libEGL\resource.h">
-      <Filter>libEGL</Filter>
-    </ClInclude>
-    <None Include="angle.gyp"/>
+    <ClInclude Include=".\libEGL\resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".\libEGL\libEGL.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include=".\libEGL\libEGL.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{E2AB75E3-DBC2-3F56-83D0-BCE042B88502}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object Libraries">
+      <UniqueIdentifier>{6B8DEDB7-68E2-3D5F-8CFC-C9BA52CA3773}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{41B44175-B2D7-37D6-84A1-4157C7E136AB}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

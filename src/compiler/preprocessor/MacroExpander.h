@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -12,6 +12,10 @@
 
 #include "compiler/preprocessor/Lexer.h"
 #include "compiler/preprocessor/Macro.h"
+#include "compiler/preprocessor/Preprocessor.h"
+
+namespace angle
+{
 
 namespace pp
 {
@@ -25,7 +29,8 @@ class MacroExpander : public Lexer
     MacroExpander(Lexer *lexer,
                   MacroSet *macroSet,
                   Diagnostics *diagnostics,
-                  int allowedMacroExpansionDepth);
+                  const PreprocessorSettings &settings,
+                  bool parseDefined);
     ~MacroExpander() override;
 
     void lex(Token *token) override;
@@ -35,7 +40,7 @@ class MacroExpander : public Lexer
     void ungetToken(const Token &token);
     bool isNextTokenLeftParen();
 
-    bool pushMacro(const Macro &macro, const Token &identifier);
+    bool pushMacro(std::shared_ptr<Macro> macro, const Token &identifier);
     void popMacro();
 
     bool expandMacro(const Macro &macro, const Token &identifier, std::vector<Token> *replacements);
@@ -52,11 +57,12 @@ class MacroExpander : public Lexer
     struct MacroContext
     {
         MacroContext();
+        ~MacroContext();
         bool empty() const;
         const Token &get();
         void unget();
 
-        const Macro *macro;
+        std::shared_ptr<Macro> macro;
         std::size_t index;
         std::vector<Token> replacements;
     };
@@ -64,19 +70,22 @@ class MacroExpander : public Lexer
     Lexer *mLexer;
     MacroSet *mMacroSet;
     Diagnostics *mDiagnostics;
+    bool mParseDefined;
 
     std::unique_ptr<Token> mReserveToken;
     std::vector<MacroContext *> mContextStack;
     size_t mTotalTokensInContexts;
 
-    int mAllowedMacroExpansionDepth;
+    PreprocessorSettings mSettings;
 
     bool mDeferReenablingMacros;
-    std::vector<const Macro *> mMacrosToReenable;
+    std::vector<std::shared_ptr<Macro>> mMacrosToReenable;
 
     class ScopedMacroReenabler;
 };
 
 }  // namespace pp
+
+}  // namespace angle
 
 #endif  // COMPILER_PREPROCESSOR_MACROEXPANDER_H_
